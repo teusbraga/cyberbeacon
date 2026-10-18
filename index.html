@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -3332,21 +3332,160 @@
       });
     }
 
-    // --- 4. Busca / Filtro Rápido em Tempo Real ---
+    // --- 4. Busca / Filtro Rápido em Tempo Real (Inteligente e Visual) ---
     const searchInput = document.getElementById('quick-search');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        const sections = document.querySelectorAll('.tutorial-section');
-        
-        sections.forEach(sec => {
-          const text = sec.innerText.toLowerCase();
-          if (query === '' || text.includes(query)) {
-            sec.style.display = '';
-          } else {
-            sec.style.display = 'none';
+    const heroBanner = document.querySelector('.hero-banner');
+    const bateOlhoSection = document.getElementById('bate-olho');
+    const boCards = document.querySelectorAll('.bo-card');
+    const tutorialSections = document.querySelectorAll('.tutorial-section');
+    const sidebarLinks = document.querySelectorAll('.nav-list a');
+
+    // Container para aviso de nenhum resultado
+    let noResultsNotice = document.getElementById('no-search-results');
+    if (!noResultsNotice) {
+      noResultsNotice = document.createElement('div');
+      noResultsNotice.id = 'no-search-results';
+      noResultsNotice.style.cssText = 'display: none; background: var(--bg-surface); border: 1px dashed var(--border-subtle); border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center; margin: 2rem 0;';
+      noResultsNotice.innerHTML = `
+        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔍</div>
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Nenhum elemento encontrado</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">Nenhuma tag, demonstração ou seção corresponde ao termo pesquisado.</p>
+        <button id="btn-clear-search" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; cursor: pointer;">Limpar Busca</button>
+      `;
+      const contentArea = document.querySelector('.content-area');
+      if (contentArea) {
+        contentArea.insertBefore(noResultsNotice, contentArea.firstChild);
+      }
+      const clearBtn = noResultsNotice.querySelector('#btn-clear-search');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          if (searchInput) {
+            searchInput.value = '';
+            executeSearch('');
+            searchInput.focus();
           }
         });
+      }
+    }
+
+    function executeSearch(query) {
+      let totalMatches = 0;
+
+      if (!query) {
+        // Restaurar estado completo
+        if (heroBanner) heroBanner.style.display = '';
+        if (bateOlhoSection) bateOlhoSection.style.display = '';
+        boCards.forEach(c => c.style.display = '');
+        
+        tutorialSections.forEach(sec => {
+          sec.style.display = '';
+          sec.querySelectorAll('.demo-card').forEach(dc => dc.style.display = '');
+        });
+
+        sidebarLinks.forEach(link => {
+          link.style.display = '';
+          link.style.opacity = '1';
+        });
+
+        if (noResultsNotice) noResultsNotice.style.display = 'none';
+        return;
+      }
+
+      // 1. Ocultar banner do topo para focar nos resultados
+      if (heroBanner) heroBanner.style.display = 'none';
+
+      // 2. Filtrar cards visuais do Bate-Olho
+      let boMatches = 0;
+      boCards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const tagText = (card.querySelector('.bo-tag')?.innerText || '').toLowerCase();
+        const inputs = Array.from(card.querySelectorAll('input, select, textarea, button'))
+                            .map(el => (el.type || '') + ' ' + (el.placeholder || '') + ' ' + (el.value || '')).join(' ').toLowerCase();
+        const fullCardText = text + ' ' + tagText + ' ' + inputs;
+
+        if (fullCardText.includes(query)) {
+          card.style.display = 'flex';
+          boMatches++;
+          totalMatches++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (bateOlhoSection) {
+        bateOlhoSection.style.display = boMatches > 0 ? '' : 'none';
+      }
+
+      // 3. Filtrar seções e demo-cards
+      tutorialSections.forEach(sec => {
+        const secTitle = (sec.querySelector('.section-title')?.innerText || '').toLowerCase();
+        const secDesc = (sec.querySelector('.section-desc')?.innerText || '').toLowerCase();
+        const secTag = (sec.querySelector('.section-tag')?.innerText || '').toLowerCase();
+        const secHeaderMatches = (secTitle + ' ' + secDesc + ' ' + secTag).includes(query);
+
+        let secCardMatches = 0;
+        const demoCards = sec.querySelectorAll('.demo-card');
+
+        demoCards.forEach(card => {
+          const cardText = card.innerText.toLowerCase();
+          if (secHeaderMatches || cardText.includes(query)) {
+            card.style.display = '';
+            secCardMatches++;
+            totalMatches++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (secHeaderMatches || secCardMatches > 0) {
+          sec.style.display = '';
+        } else {
+          sec.style.display = 'none';
+        }
+
+        // Atualizar link na sidebar
+        const secId = sec.getAttribute('id');
+        if (secId) {
+          const link = document.querySelector(`.nav-list a[href="#${secId}"]`);
+          if (link) {
+            link.style.display = (sec.style.display === 'none') ? 'none' : '';
+          }
+        }
+      });
+
+      // Atualizar link do bate-olho na sidebar
+      const bateOlhoLink = document.querySelector('.nav-list a[href="#bate-olho"]');
+      if (bateOlhoLink && bateOlhoSection) {
+        bateOlhoLink.style.display = (bateOlhoSection.style.display === 'none') ? 'none' : '';
+      }
+
+      // 4. Exibir aviso caso 0 elementos combinem
+      if (noResultsNotice) {
+        if (totalMatches === 0) {
+          noResultsNotice.style.display = 'block';
+          const title = noResultsNotice.querySelector('h3');
+          if (title) title.innerText = `Nenhum resultado para "${query}"`;
+        } else {
+          noResultsNotice.style.display = 'none';
+        }
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        executeSearch(e.target.value.toLowerCase().trim());
+      });
+
+      searchInput.addEventListener('search', (e) => {
+        executeSearch(e.target.value.toLowerCase().trim());
+      });
+
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          executeSearch('');
+          searchInput.blur();
+        }
       });
     }
 

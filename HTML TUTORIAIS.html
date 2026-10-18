@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -821,17 +821,28 @@
       setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    // --- Filtro por Texto em Tempo Real ---
+    // --- Filtro por Texto em Tempo Real (Robusto e com Suporte a Pílulas) ---
     const searchFilter = document.getElementById('search-filter');
-    searchFilter.addEventListener('input', (e) => {
-      const val = e.target.value.toLowerCase().trim();
+    let currentCategory = 'all';
+
+    function applySearchAndFilter() {
+      const val = (searchFilter ? searchFilter.value : '').toLowerCase().trim();
       const cards = document.querySelectorAll('.tag-card');
       const blocks = document.querySelectorAll('.category-block');
+      let totalVisible = 0;
 
       cards.forEach(card => {
-        const text = (card.getAttribute('data-tags') + ' ' + card.innerText).toLowerCase();
-        if (val === '' || text.includes(val)) {
+        const tags = (card.getAttribute('data-tags') || '').toLowerCase();
+        const text = (tags + ' ' + card.innerText).toLowerCase();
+        const matchesQuery = (val === '' || text.includes(val));
+        
+        const parentBlock = card.closest('.category-block');
+        const blockCat = parentBlock ? parentBlock.getAttribute('data-category') : '';
+        const matchesCategory = (currentCategory === 'all' || blockCat === currentCategory);
+
+        if (matchesQuery && matchesCategory) {
           card.style.display = 'flex';
+          totalVisible++;
         } else {
           card.style.display = 'none';
         }
@@ -839,24 +850,64 @@
 
       // Esconder blocos vazios
       blocks.forEach(block => {
-        const visibleCards = block.querySelectorAll('.tag-card[style*="display: flex"], .tag-card:not([style*="display: none"])');
-        block.style.display = (val !== '' && visibleCards.length === 0) ? 'none' : 'block';
+        const visibleCards = Array.from(block.querySelectorAll('.tag-card')).filter(c => c.style.display !== 'none');
+        block.style.display = (visibleCards.length > 0) ? 'block' : 'none';
       });
-    });
+
+      // Container de nenhum resultado
+      let noResultBox = document.getElementById('no-search-results-tutoriais');
+      if (!noResultBox) {
+        noResultBox = document.createElement('div');
+        noResultBox.id = 'no-search-results-tutoriais';
+        noResultBox.style.cssText = 'display: none; background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); padding: 2.5rem 1.5rem; text-align: center; margin: 2rem 0;';
+        noResultBox.innerHTML = `
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text);">Nenhuma tag encontrada</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Tente pesquisar por outro nome de tag ou atributo.</p>
+          <button id="btn-clear-tutoriais-search" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem; cursor: pointer;">Limpar Busca</button>
+        `;
+        const firstBlock = document.querySelector('.category-block');
+        if (firstBlock && firstBlock.parentNode) {
+          firstBlock.parentNode.insertBefore(noResultBox, firstBlock);
+        }
+        const btnClear = noResultBox.querySelector('#btn-clear-tutoriais-search');
+        if (btnClear) {
+          btnClear.addEventListener('click', () => {
+            if (searchFilter) {
+              searchFilter.value = '';
+              applySearchAndFilter();
+              searchFilter.focus();
+            }
+          });
+        }
+      }
+
+      if (noResultBox) {
+        noResultBox.style.display = (totalVisible === 0) ? 'block' : 'none';
+      }
+    }
+
+    if (searchFilter) {
+      searchFilter.addEventListener('input', applySearchAndFilter);
+      searchFilter.addEventListener('search', applySearchAndFilter);
+      searchFilter.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchFilter.value = '';
+          applySearchAndFilter();
+          searchFilter.blur();
+        }
+      });
+    }
 
     // --- Filtro por Categoria (Pílulas) ---
     function filterCategory(cat) {
+      currentCategory = cat;
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      event.target.classList.add('active');
-
-      const blocks = document.querySelectorAll('.category-block');
-      blocks.forEach(b => {
-        if (cat === 'all' || b.getAttribute('data-category') === cat) {
-          b.style.display = 'block';
-        } else {
-          b.style.display = 'none';
-        }
-      });
+      const activeBtn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('.pill') : null;
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+      applySearchAndFilter();
     }
 
     // --- Alternador de Tema Escuro / Claro ---
