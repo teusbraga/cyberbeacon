@@ -1,0 +1,18 @@
+{
+  "name": "cyberbeacon",
+  "version": "1.0.0",
+  "description": "Cyber Beacon: Guia Definitivo e Compiladão de HTML5 Semântico, CSS3 Moderno e Vitrine Bate-Olho.",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "html5",
+    "css3",
+    "cyberbeacon",
+    "tutorial",
+    "web-development"
+  ],
+  "author": "Cyber Beacon",
+  "license": "MIT"
+}

@@ -1,0 +1,3471 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="O guia definitivo e compiladão nervoso de HTML5 semântico e CSS3 Vanilla moderno. Exemplos práticos, formulários, menus de setup, modais e componentes reais.">
+  <meta name="author" content="Tutorial HTML & CSS Monolito">
+  <meta property="og:title" content="HTML5 & CSS3 Vanilla: O Compiladão Definitivo">
+  <meta property="og:description" content="Guia monolítico interativo com todas as tags essenciais, boas práticas e componentes de interface do mundo real.">
+  <meta property="og:type" content="website">
+  <title>HTML5 & CSS3 Master Vault | O Compiladão Nervoso Definitivo</title>
+  <link rel="icon" type="image/svg+xml" href="imgs/favicon-beacon-neon.svg">
+
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & VARIÁVEIS CSS (TEMA CLARO E ESCURO)
+       ========================================================================== */
+    :root {
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: 'Fira Code', 'Cascadia Code', Consolas, Monaco, 'Courier New', monospace;
+
+      /* Transições suaves */
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.25s ease;
+      --transition-slow: 0.4s ease;
+
+      /* Raios de borda */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      /* Sombras */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.35);
+
+      /* Cores fixas de utilidade */
+      --brand-primary: #6366f1;
+      --brand-primary-hover: #4f46e5;
+      --brand-accent: #06b6d4;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+      --color-info: #3b82f6;
+    }
+
+    /* Tema Escuro (Padrão) */
+    html[data-theme="dark"] {
+      --bg-body: #0b0f19;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1f2937;
+      --bg-surface-hover: #283548;
+      --border-subtle: #2d3748;
+      --border-strong: #4b5563;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --code-bg: #0d1117;
+      --code-border: #21262d;
+      --preview-bg: #090d16;
+      --preview-grid: rgba(255, 255, 255, 0.03);
+      --badge-bg: #1e1b4b;
+      --badge-text: #a5b4fc;
+    }
+
+    /* Tema Claro */
+    html[data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --code-bg: #1e293b;
+      --code-border: #334155;
+      --preview-bg: #f8fafc;
+      --preview-grid: rgba(0, 0, 0, 0.03);
+      --badge-bg: #e0e7ff;
+      --badge-text: #3730a3;
+    }
+
+    /* ==========================================================================
+       2. RESET MODERNO & CONFIGURAÇÕES GLOBAIS
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: dark light;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      overflow-x: hidden;
+    }
+
+    /* Barra de progresso de leitura no topo */
+    #reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--brand-accent), var(--brand-primary));
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* ==========================================================================
+       3. ESTRUTURA DO LAYOUT (HEADER, SIDEBAR, MAIN)
+       ========================================================================== */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    html[data-theme="light"] header.site-header {
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.45rem 0.85rem 0.45rem 2.2rem;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      width: 220px;
+      transition: width var(--transition-normal), border-color var(--transition-fast);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--brand-primary);
+      width: 280px;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+
+    /* Container do App com Layout em Grade / Colunas */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 65px);
+      width: 100%;
+      max-width: 1680px;
+      margin: 0 auto;
+    }
+
+    /* Sidebar Fixa de Navegação */
+    aside.sidebar {
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-list a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-list a:hover {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      transform: translateX(4px);
+    }
+
+    .nav-list a.active {
+      background-color: var(--brand-primary);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* Conteúdo Principal */
+    main.content-area {
+      padding: 2.5rem 3rem 6rem;
+      max-width: 1200px;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================================================
+       4. COMPONENTES VISUAIS COMUNS DO TUTORIAL
+       ========================================================================== */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.1));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: '</>';
+      position: absolute;
+      right: -20px;
+      bottom: -40px;
+      font-family: var(--font-mono);
+      font-size: 10rem;
+      font-weight: 900;
+      color: rgba(99, 102, 241, 0.05);
+      pointer-events: none;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #ffffff, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    html[data-theme="light"] .hero-title {
+      background: linear-gradient(135deg, #1e1b4b, #4338ca);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 750px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Seções do Tutorial */
+    .tutorial-section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 80px;
+    }
+
+    .section-header {
+      margin-bottom: 1.75rem;
+      border-bottom: 2px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--brand-accent);
+      background-color: var(--bg-surface-elevated);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Card de Demonstração Lado a Lado (Exemplo + Código) */
+    .demo-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .demo-header {
+      padding: 0.75rem 1.25rem;
+      background-color: var(--bg-surface-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .demo-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 900px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .demo-preview {
+      padding: 1.75rem;
+      background-color: var(--preview-bg);
+      background-image: radial-gradient(var(--preview-grid) 1px, transparent 1px);
+      background-size: 16px 16px;
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .demo-preview {
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+    }
+
+    .demo-code-wrapper {
+      position: relative;
+      background-color: var(--code-bg);
+    }
+
+    .btn-copy {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-copy:hover {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      color: #fff;
+    }
+
+    pre.code-block {
+      margin: 0;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* Destaques de sintaxe simulados em HTML e CSS */
+    .c-tag { color: #f43f5e; font-weight: 600; }
+    .c-attr { color: #38bdf8; }
+    .c-val { color: #a3e635; }
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-prop { color: #fb923c; }
+    .c-sel { color: #c084fc; font-weight: 600; }
+    .c-func { color: #38bdf8; font-weight: 600; }
+
+    /* Badges e Pílulas */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-primary { background-color: var(--badge-bg); color: var(--badge-text); }
+    .badge-success { background-color: rgba(16, 185, 129, 0.15); color: var(--color-success); }
+    .badge-warning { background-color: rgba(245, 158, 11, 0.15); color: var(--color-warning); }
+    .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: var(--color-danger); }
+    .badge-info { background-color: rgba(59, 130, 246, 0.15); color: var(--color-info); }
+
+    /* Caixas de Alerta Informativas (Callouts) */
+    .callout {
+      border-left: 4px solid var(--brand-primary);
+      background-color: var(--bg-surface-elevated);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .callout.tip { border-color: var(--color-success); }
+    .callout.warning { border-color: var(--color-warning); }
+    .callout.danger { border-color: var(--color-danger); }
+
+    /* Botões Padrão */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: var(--brand-primary);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(99, 102, 241, 0.25);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--brand-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-strong);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--color-danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: #dc2626;
+    }
+
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--text-main);
+      background-color: var(--bg-surface-elevated);
+    }
+
+    /* ==========================================================================
+       5. ESTILOS DE FORMULÁRIO (INPUTS, LABELS, CHECKS, RADIOS)
+       ========================================================================== */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 1.25rem;
+      width: 100%;
+    }
+
+    .form-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-hint {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .form-control:disabled {
+      background-color: var(--bg-surface-elevated);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .form-control:user-invalid {
+      border-color: var(--color-danger);
+    }
+
+    .form-control:user-valid:not(:placeholder-shown) {
+      border-color: var(--color-success);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Switch / Toggle em CSS Puro */
+    .switch-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      gap: 1rem;
+    }
+
+    .switch-input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-slider {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      background-color: var(--border-strong);
+      border-radius: var(--radius-full);
+      transition: background-color var(--transition-normal);
+      flex-shrink: 0;
+    }
+
+    .switch-slider::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform var(--transition-normal);
+    }
+
+    .switch-input:checked + .switch-slider {
+      background-color: var(--brand-primary);
+    }
+
+    .switch-input:checked + .switch-slider::before {
+      transform: translateX(20px);
+    }
+
+    .switch-input:focus-visible + .switch-slider {
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+    }
+
+    /* Custom Checkbox & Radio */
+    .custom-check-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .custom-check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .custom-check-item input[type="checkbox"],
+    .custom-check-item input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-strong);
+      border-radius: 4px;
+      background-color: var(--bg-surface);
+      display: grid;
+      place-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      accent-color: var(--brand-primary);
+    }
+
+    .custom-check-item input[type="radio"] {
+      border-radius: 50%;
+    }
+
+    .custom-check-item input[type="checkbox"]:checked,
+    .custom-check-item input[type="radio"]:checked {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+    }
+
+    .custom-check-item input[type="checkbox"]:checked::before {
+      content: "✔";
+      font-size: 11px;
+      color: #fff;
+    }
+
+    .custom-check-item input[type="radio"]:checked::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    /* Slider / Range */
+    input[type="range"] {
+      accent-color: var(--brand-primary);
+      width: 100%;
+      cursor: pointer;
+    }
+
+    /* Fieldset e Legend */
+    fieldset.custom-fieldset {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      background-color: var(--bg-surface);
+    }
+
+    legend.custom-legend {
+      padding: 0 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--brand-primary);
+    }
+
+    /* ==========================================================================
+       6. TABELAS MODERNAS & RESPONSIVAS
+       ========================================================================== */
+    .table-responsive-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    table.data-table caption {
+      caption-side: top;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    table.data-table th, 
+    table.data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    table.data-table thead th {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    table.data-table tbody tr:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    table.data-table tfoot td {
+      background-color: var(--bg-surface-elevated);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       7. DETAILS & SUMMARY (ACCORDION NATIVO)
+       ========================================================================== */
+    details.custom-accordion {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+
+    details.custom-accordion[open] {
+      border-color: var(--brand-primary);
+    }
+
+    details.custom-accordion summary {
+      padding: 0.9rem 1.25rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-main);
+      background-color: var(--bg-surface-elevated);
+      transition: background-color var(--transition-fast);
+    }
+
+    details.custom-accordion summary:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    details.custom-accordion summary::after {
+      content: "➕";
+      font-size: 0.85rem;
+      color: var(--brand-primary);
+      transition: transform var(--transition-normal);
+    }
+
+    details.custom-accordion[open] summary::after {
+      content: "➖";
+    }
+
+    .accordion-body {
+      padding: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.925rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       8. MODAL / DIALOG NATIVO DO HTML5 (<dialog>)
+       ========================================================================== */
+    dialog.custom-dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      padding: 0;
+      max-width: 540px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.2s ease, transform 0.2s ease, overlay 0.2s allow-discrete, display 0.2s allow-discrete;
+    }
+
+    dialog.custom-dialog[open] {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    dialog.custom-dialog::backdrop {
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    .dialog-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dialog-header h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .dialog-body {
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .dialog-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background-color: var(--bg-surface-elevated);
+    }
+
+    /* ==========================================================================
+       9. SEÇÃO PRÁTICA: PAINEL DE CONFIGURAÇÕES / SETUP MENU
+       ========================================================================== */
+    .settings-panel {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    @media (max-width: 850px) {
+      .settings-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .settings-nav {
+      background-color: var(--bg-surface-elevated);
+      border-right: 1px solid var(--border-subtle);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .settings-nav-btn {
+      text-align: left;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all var(--transition-fast);
+    }
+
+    .settings-nav-btn:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-main);
+    }
+
+    .settings-nav-btn.active {
+      background-color: var(--brand-primary);
+      color: #fff;
+    }
+
+    .settings-tab-content {
+      padding: 2rem;
+      display: none;
+    }
+
+    .settings-tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar-upload-area {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-preview {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      display: grid;
+      place-items: center;
+      font-size: 1.75rem;
+      color: #fff;
+      font-weight: 700;
+      overflow: hidden;
+      border: 3px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .danger-zone {
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      background-color: rgba(239, 68, 68, 0.05);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .danger-zone-title {
+      color: var(--color-danger);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ==========================================================================
+       10. COMPONENTES DO DIA A DIA (CARDS, BADGES, TABS, TOOLTIPS, SKELETON)
+       ========================================================================== */
+    /* Cards Responsivos */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .ui-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .ui-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand-primary);
+    }
+
+    .ui-card-image {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      color: var(--text-dim);
+      font-size: 2.5rem;
+      overflow: hidden;
+    }
+
+    /* Tooltip em CSS Puro com attr() */
+    .has-tooltip {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dashed var(--text-dim);
+    }
+
+    .has-tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background-color: #0f172a;
+      color: #fff;
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+    }
+
+    .has-tooltip:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Skeleton Loading em CSS Puro */
+    .skeleton-box {
+      width: 100%;
+      height: 20px;
+      background: linear-gradient(90deg, var(--bg-surface-elevated) 25%, var(--bg-surface-hover) 50%, var(--bg-surface-elevated) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Toast Notification Flutuante */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--color-success);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 300px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    /* Botão Voltar ao Topo */
+    #back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      z-index: 90;
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #back-to-top:hover {
+      background-color: var(--brand-primary);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       11. RESPONSIVIDADE (MOBILE BREAKPOINTS)
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside.sidebar {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 65px;
+        width: 280px;
+        z-index: 95;
+        box-shadow: var(--shadow-lg);
+      }
+
+      aside.sidebar.mobile-open {
+        display: flex;
+      }
+
+      main.content-area {
+        padding: 1.5rem;
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex !important;
+      }
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.4rem 0.6rem;
+    /* ==========================================================================
+       12. MOSTRUÁRIO BATE-OLHO (SHOWROOM VISUAL DE TAGS INSTANTÂNEO)
+       ========================================================================== */
+    .bate-olho-box {
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
+      border: 2px solid var(--brand-accent);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin-bottom: 3.5rem;
+      box-shadow: 0 8px 30px rgba(6, 182, 212, 0.12);
+      scroll-margin-top: 80px;
+    }
+
+    .bate-olho-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .bate-olho-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .bo-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: all var(--transition-fast);
+    }
+
+    .bo-card:hover {
+      border-color: var(--brand-accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .bo-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bo-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--brand-accent);
+      background-color: var(--bg-surface-elevated);
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    .bo-copy {
+      background: none;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .bo-copy:hover {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      color: #fff;
+    }
+
+    .bo-preview {
+      background-color: var(--bg-surface-elevated);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de progresso de leitura -->
+  <div id="reading-progress"></div>
+
+  <!-- Cabeçalho Principal Fixo -->
+  <header class="site-header">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <button class="mobile-menu-btn" id="btn-toggle-menu" aria-label="Abrir menu de navegação">
+        ☰
+      </button>
+      <a href="#" class="brand">
+        <img src="imgs/favicon-beacon-neon.svg" alt="Logo Cyber Beacon" width="36" height="36" style="border-radius: var(--radius-sm); box-shadow: var(--shadow-glow); display: block;">
+        <div>
+          <span>HTML5 & CSS3</span>
+          <span style="font-size: 0.75rem; color: var(--brand-accent); display: block; font-weight: normal;">Master Vault Monólito</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Campo de Busca Rápida -->
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="search" id="quick-search" placeholder="Filtrar tag ou seção (ex: dialog, input, grid)..." autocomplete="off">
+    </div>
+
+    <!-- Botões de Ação do Cabeçalho -->
+    <div class="header-actions">
+      <a href="#bate-olho" class="btn btn-primary" style="background: linear-gradient(135deg, #06b6d4, #6366f1); border: none; color: white;">⚡ Bate-Olho</a>
+      <a href="#css-mastery" class="btn btn-secondary" style="border-color: var(--brand-accent); color: var(--brand-accent);" title="Ver Guia de CSS3 Moderno">🎨 CSS3 Práticas</a>
+      <a href="tutoriais.html" class="btn btn-secondary" title="Abrir Vitrine Pura">👀 Vitrine Pura</a>
+      <button id="theme-toggle" class="btn btn-secondary" title="Alternar Modo Escuro / Claro">
+        <span id="theme-icon">🌙</span>
+      </button>
+      <a href="#setup-menu" class="btn btn-secondary" style="display: none; @media(min-width:600px){display:inline-flex;}">
+        ⚙️ Ver Setup
+      </a>
+    </div>
+  </header>
+
+  <!-- Layout Principal do Sistema -->
+  <div class="app-layout">
+    
+    <!-- Barra Lateral de Navegação (Sumário Rápido) -->
+    <aside class="sidebar" id="sidebar-nav">
+      <div>
+        <div class="sidebar-section-title">⚡ Consulta Rápida</div>
+        <ul class="nav-list">
+          <li><a href="#bate-olho" style="color: var(--brand-accent); font-weight: bold;">⚡ Bate-Olho Instantâneo</a></li>
+          <li><a href="#css-mastery" style="color: #38bdf8; font-weight: bold;">🎨 Guia de CSS3 Moderno</a></li>
+          <li><a href="tutoriais.html" target="_blank">↗️ Vitrine Pura (Sem Textos)</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">🧪 Labs & Protótipos</div>
+        <ul class="nav-list">
+          <li><a href="exemplos/crud-mvc-exemplo.html" target="_blank">📦 CRUD MVC com JSON</a></li>
+          <li><a href="exemplos/json+localstorage-v2.html" target="_blank">💾 LocalStorage & JSON v2</a></li>
+          <li><a href="exemplos/Janela-modal_pop-up-window.html" target="_blank">🪟 Modais e Pop-ups</a></li>
+          <li><a href="exemplos/campo-numeros-validos.html" target="_blank">🔢 Restrições de Input</a></li>
+          <li><a href="exemplos/preview-favicons.html" target="_blank">🎨 Favicon Preview Lab</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">Fundamentos</div>
+        <ul class="nav-list">
+          <li><a href="#intro">🚀 Introdução & Filosofia</a></li>
+          <li><a href="#head-tags">🏷️ Anatomia do &lt;head&gt;</a></li>
+          <li><a href="#semantic-layout">🏗️ Semântica Estrutural</a></li>
+          <li><a href="#text-formatting">✍️ Tipografia & Inline</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">Estrutura & Mídia</div>
+        <ul class="nav-list">
+          <li><a href="#lists-details">📑 Listas & &lt;details&gt;</a></li>
+          <li><a href="#media-graphics">🖼️ Mídia, Áudio & Vídeo</a></li>
+          <li><a href="#tables-section">📊 Tabelas Responsivas</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">O Mestre dos Formulários</div>
+        <ul class="nav-list">
+          <li><a href="#form-inputs">📝 Inputs & Tipos</a></li>
+          <li><a href="#form-selectors">🔘 Selects, Radios & Checks</a></li>
+          <li><a href="#form-validation">🛡️ Validação Nativa HTML5</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">Componentes Práticos</div>
+        <ul class="nav-list">
+          <li><a href="#setup-menu">⚙️ Menu de Setup Realista</a></li>
+          <li><a href="#dialog-modals">🪟 Modais Nativos &lt;dialog&gt;</a></li>
+          <li><a href="#ui-cards">🃏 Cards, Badges & Tooltips</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title" style="color: var(--brand-accent);">🎨 Mestre do CSS3 Moderno</div>
+        <ul class="nav-list">
+          <li><a href="#css-mastery" style="color: #38bdf8; font-weight: 700;">🔥 Padrões & Práticas CSS3</a></li>
+          <li><a href="#css-box-reset">📐 Reset & Box Model</a></li>
+          <li><a href="#css-centering">🎯 3 Formas de Centralizar</a></li>
+          <li><a href="#css-flexbox-power">⚡ Flexbox na Vida Real</a></li>
+          <li><a href="#css-grid-autofit">📊 Grid Auto-Fit Fluido</a></li>
+          <li><a href="#css-fluid-clamp">🌊 Tipografia com clamp()</a></li>
+          <li><a href="#css-modern-effects">✨ Glassmorphism & Aspect-Ratio</a></li>
+          <li><a href="#css-custom-props">🌓 Variáveis & Dark Mode</a></li>
+          <li><a href="#css-modern-selectors">🛡️ :has() & Seletores Modernos</a></li>
+          <li><a href="#cheat-sheet">📖 Folha de Cola / Obsoletos</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="content-area">
+
+      <!-- Hero Banner -->
+      <section class="hero-banner">
+        <div class="hero-badges">
+          <span class="badge badge-primary">HTML5 Padrão W3C</span>
+          <span class="badge badge-success">CSS3 Moderno Vanilla</span>
+          <span class="badge badge-info">Zero Frameworks</span>
+          <span class="badge badge-warning">100% Responsivo</span>
+        </div>
+        <h1 class="hero-title">O Compiladão Nervoso de HTML & CSS</h1>
+        <p class="hero-subtitle">
+          Um arquivo único, autossuficiente e interativo reunindo tudo o que você precisa saber sobre tags modernas, semântica, validações de formulário, layouts flex/grid e padrões de interface comuns.
+        </p>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="#bate-olho" class="btn btn-primary" style="background: linear-gradient(135deg, #06b6d4, #6366f1); border: none;">⚡ Vitrine Bate-Olho</a>
+          <a href="#setup-menu" class="btn btn-secondary">Menu de Setup</a>
+          <a href="#form-inputs" class="btn btn-secondary">Ver Formulários</a>
+          <a href="#dialog-modals" class="btn btn-secondary">Testar Modal Nativo</a>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO BATE-OLHO: MOSTRUÁRIO VISUAL INSTANTÂNEO DE TAGS
+           ====================================================================== -->
+      <section id="bate-olho" class="bate-olho-box">
+        <div class="bate-olho-header">
+          <div>
+            <div class="badge badge-success" style="margin-bottom: 0.35rem;">⚡ Modo Bate-Olho</div>
+            <h2 style="font-size: 1.4rem; font-weight: 800;">Vitrine Visual Instantânea de Tags</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;">
+              Esqueceu o nome da tag? Bateu o olho, achou o visual, clicou em "Copiar" e usou.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="tutoriais.html" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem;">
+              Abrir Janela Pura ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="bate-olho-grid">
+          <!-- Text -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="text"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;text&quot; placeholder=&quot;Nome&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="text" placeholder="Texto comum" style="width:100%; font-size:0.8rem; padding:0.35rem;"></div>
+          </div>
+
+          <!-- Password -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="password"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;password&quot; placeholder=&quot;Senha&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="password" value="segredo123" style="width:100%; font-size:0.8rem; padding:0.35rem;"></div>
+          </div>
+
+          <!-- Color -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="color"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;color&quot; value=&quot;#6366f1&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview" style="gap:0.5rem;"><input type="color" value="#6366f1" style="height:32px; width:45px; cursor:pointer;"><span style="font-family:var(--font-mono); font-size:0.75rem;">#6366f1</span></div>
+          </div>
+
+          <!-- Range -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="range"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;range&quot; min=&quot;0&quot; max=&quot;100&quot; value=&quot;60&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="range" min="0" max="100" value="60" style="width:100%;"></div>
+          </div>
+
+          <!-- Date -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="date"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;date&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="date" value="2026-10-17" style="width:100%; font-size:0.8rem; padding:0.25rem;"></div>
+          </div>
+
+          <!-- Time -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="time"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;time&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="time" value="15:30" style="width:100%; font-size:0.8rem; padding:0.25rem;"></div>
+          </div>
+
+          <!-- Datetime-local -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="datetime-local"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;datetime-local&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="datetime-local" value="2026-10-17T18:00" style="width:100%; font-size:0.75rem; padding:0.25rem;"></div>
+          </div>
+
+          <!-- Month -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="month"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;month&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="month" value="2026-10" style="width:100%; font-size:0.8rem; padding:0.25rem;"></div>
+          </div>
+
+          <!-- Progress -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;progress value="70"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;progress value=&quot;70&quot; max=&quot;100&quot;&gt;&lt;/progress&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview" style="width:100%;"><progress value="70" max="100" style="width:100%; height:14px;"></progress></div>
+          </div>
+
+          <!-- Meter -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;meter value="0.75"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;meter value=&quot;0.75&quot; min=&quot;0&quot; max=&quot;1&quot;&gt;&lt;/meter&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview" style="width:100%;"><meter value="0.75" min="0" max="1" style="width:100%; height:14px;"></meter></div>
+          </div>
+
+          <!-- Output Interativo -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;output&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;output&gt;Resultado&lt;/output&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview" style="gap:0.35rem; font-size:0.8rem;">
+              <span>5 + 5 = </span><output style="font-weight:bold; color:var(--brand-accent);">10</output>
+            </div>
+          </div>
+
+          <!-- Datalist -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;datalist&gt; (Autocomplete)</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input list=&quot;itens&quot;&gt;\n&lt;datalist id=&quot;itens&quot;&gt;&lt;option value=&quot;Opção 1&quot;&gt;&lt;/datalist&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input list="bo-dl" placeholder="Clique 2x para ver" style="width:100%; font-size:0.75rem;"><datalist id="bo-dl"><option value="Item A"><option value="Item B"></datalist></div>
+          </div>
+
+          <!-- Details / Summary -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;details&gt; &lt;summary&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;details&gt;&lt;summary&gt;Título&lt;/summary&gt;&lt;p&gt;Conteúdo&lt;/p&gt;&lt;/details&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><details style="font-size:0.75rem; width:100%;"><summary style="color:var(--brand-primary); cursor:pointer;">Sanfona Nativa</summary><small style="color:var(--text-muted);">Abre sem JS!</small></details></div>
+          </div>
+
+          <!-- Dialog -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;dialog&gt; Modal</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;dialog id=&quot;m&quot;&gt;&lt;p&gt;Texto&lt;/p&gt;&lt;/dialog&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><button class="btn btn-secondary" style="font-size:0.75rem; padding:0.25rem 0.6rem;" onclick="document.getElementById('meu-dialogo-demo').showModal()">Testar Dialog</button></div>
+          </div>
+
+          <!-- Kbd -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;kbd&gt; Tecla</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;kbd&gt;Ctrl&lt;/kbd&gt; + &lt;kbd&gt;K&lt;/kbd&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview" style="gap:0.3rem; font-size:0.75rem;">
+              <kbd style="border:1px solid var(--border-subtle); padding:2px 5px; border-radius:3px;">Ctrl</kbd> + <kbd style="border:1px solid var(--border-subtle); padding:2px 5px; border-radius:3px;">K</kbd>
+            </div>
+          </div>
+
+          <!-- Mark -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;mark&gt; Destaque</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;mark&gt;texto&lt;/mark&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><mark style="background-color:#fef08a; color:#713f12; padding:1px 4px; border-radius:2px; font-size:0.75rem;">marca-texto</mark></div>
+          </div>
+
+          <!-- Checkbox e Radio -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input checkbox/radio&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;checkbox&quot;&gt; &lt;input type=&quot;radio&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview" style="gap:0.75rem; font-size:0.75rem;">
+              <label><input type="checkbox" checked style="accent-color:var(--brand-primary);"> Check</label>
+              <label><input type="radio" checked style="accent-color:var(--brand-primary);"> Radio</label>
+            </div>
+          </div>
+
+          <!-- File -->
+          <div class="bo-card">
+            <div class="bo-top">
+              <span class="bo-tag">&lt;input type="file"&gt;</span>
+              <button class="bo-copy" onclick="copySnippet('&lt;input type=&quot;file&quot;&gt;')">Copiar</button>
+            </div>
+            <div class="bo-preview"><input type="file" style="font-size:0.7rem; width:100%;"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 1: INTRODUÇÃO & FILOSOFIA
+           ====================================================================== -->
+      <section id="intro" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">1. Introdução & Boas Práticas do HTML Moderno</h2>
+          <span class="section-tag">&lt;!DOCTYPE html&gt;</span>
+        </div>
+        <p class="section-desc">
+          O HTML (HyperText Markup Language) não é apenas para "jogar elementos na tela". Ele fornece a **árvore de acessibilidade (AOM)**, a indexação de motores de busca (SEO) e o significado contextual para navegadores e leitores de tela.
+        </p>
+
+        <div class="callout tip">
+          <div class="callout-title">💡 A Regra de Ouro da Semântica</div>
+          Nunca use uma <code>&lt;div&gt;</code> ou <code>&lt;span&gt;</code> genérica com evento de clique quando existir uma tag nativa como <code>&lt;button&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;details&gt;</code> ou <code>&lt;dialog&gt;</code>. Elementos nativos vêm com suporte a teclado (Tab e Enter), foco e leitores de tela de graça!
+        </div>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Estrutura Mínima Obrigatória de Qualquer Página Web</span>
+            <span class="badge badge-primary">HTML5 Boilerplate</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p>Esta estrutura é o esqueleto que todo navegador exige para renderizar em modo padrão (evitando o arcaico <em>Quirks Mode</em>).</p>
+              <ul>
+                <li><strong>lang="pt-BR"</strong>: Diz aos sintetizadores de voz para pronunciarem em português.</li>
+                <li><strong>viewport</strong>: Garante escalonamento correto em smartphones e tablets.</li>
+                <li><strong>charset="UTF-8"</strong>: Garante que acentos como "á, ç, õ" não quebrem.</li>
+              </ul>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Declaração do modo padrão HTML5 --&gt;</span>
+<span class="c-tag">&lt;!DOCTYPE html&gt;</span>
+<span class="c-tag">&lt;html</span> <span class="c-attr">lang</span>=<span class="c-val">"pt-BR"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;head&gt;</span>
+    <span class="c-tag">&lt;meta</span> <span class="c-attr">charset</span>=<span class="c-val">"UTF-8"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;meta</span> <span class="c-attr">name</span>=<span class="c-val">"viewport"</span> <span class="c-attr">content</span>=<span class="c-val">"width=device-width, initial-scale=1.0"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;title&gt;</span>Título da Página<span class="c-tag">&lt;/title&gt;</span>
+    <span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"stylesheet"</span> <span class="c-attr">href</span>=<span class="c-val">"style.css"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;/head&gt;</span>
+  <span class="c-tag">&lt;body&gt;</span>
+    <span class="c-tag">&lt;h1&gt;</span>Olá, Mundo Semântico!<span class="c-tag">&lt;/h1&gt;</span>
+  <span class="c-tag">&lt;/body&gt;</span>
+<span class="c-tag">&lt;/html&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 2: ANATOMIA DO <head>
+           ====================================================================== -->
+      <section id="head-tags" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">2. Anatomia do &lt;head&gt; & Metadados Sociais (SEO)</h2>
+          <span class="section-tag">&lt;meta&gt; &lt;link&gt; &lt;title&gt;</span>
+        </div>
+        <p class="section-desc">
+          O <code>&lt;head&gt;</code> é o cérebro invisível da página. É aqui que você define como o Google lê sua página, como os cartões do WhatsApp/Discord aparecem e quais fontes são carregadas.
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Metadados Open Graph (Compartilhamento Rico)</span>
+            <span class="badge badge-info">SEO & Social</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <div style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; max-width: 340px;">
+                <div style="background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent)); height: 110px; display: grid; place-items: center; color: white; font-weight: bold;">
+                  🖼️ Imagem do Cartão Social (og:image)
+                </div>
+                <div style="padding: 0.75rem;">
+                  <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">meusite.com.br</div>
+                  <div style="font-weight: 700; font-size: 0.95rem; margin: 0.2rem 0;">HTML5 & CSS3 Master Vault</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Como seu link aparece quando enviado no WhatsApp, Twitter ou Telegram.</div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Título e Descrição Primária --&gt;</span>
+<span class="c-tag">&lt;title&gt;</span>HTML5 & CSS3 Master Vault<span class="c-tag">&lt;/title&gt;</span>
+<span class="c-tag">&lt;meta</span> <span class="c-attr">name</span>=<span class="c-val">"description"</span> <span class="c-attr">content</span>=<span class="c-val">"Tutorial completo de HTML5 e CSS..."</span><span class="c-tag">&gt;</span>
+
+<span class="c-comment">&lt;!-- Open Graph (Facebook, WhatsApp, LinkedIn, Discord) --&gt;</span>
+<span class="c-tag">&lt;meta</span> <span class="c-attr">property</span>=<span class="c-val">"og:title"</span> <span class="c-attr">content</span>=<span class="c-val">"HTML5 & CSS3 Master Vault"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;meta</span> <span class="c-attr">property</span>=<span class="c-val">"og:description"</span> <span class="c-attr">content</span>=<span class="c-val">"Guia definitivo em um único arquivo."</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;meta</span> <span class="c-attr">property</span>=<span class="c-val">"og:image"</span> <span class="c-attr">content</span>=<span class="c-val">"https://seusite.com/capa.jpg"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;meta</span> <span class="c-attr">property</span>=<span class="c-val">"og:type"</span> <span class="c-attr">content</span>=<span class="c-val">"website"</span><span class="c-tag">&gt;</span>
+
+<span class="c-comment">&lt;!-- Favicon moderno em SVG e Apple Touch Icon --&gt;</span>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"icon"</span> <span class="c-attr">type</span>=<span class="c-val">"image/svg+xml"</span> <span class="c-attr">href</span>=<span class="c-val">"/favicon.svg"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"apple-touch-icon"</span> <span class="c-attr">href</span>=<span class="c-val">"/apple-icon.png"</span><span class="c-tag">&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 3: SEMÂNTICA ESTRUTURAL
+           ====================================================================== -->
+      <section id="semantic-layout" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">3. Semântica Estrutural do HTML5</h2>
+          <span class="section-tag">&lt;header&gt; &lt;nav&gt; &lt;main&gt; &lt;article&gt; &lt;aside&gt; &lt;footer&gt;</span>
+        </div>
+        <p class="section-desc">
+          Chega de "Div Soup" (<code>&lt;div class="header"&gt;&lt;div class="menu"&gt;</code>). O HTML5 introduziu elementos estruturais dedicados com significados semânticos universais.
+        </p>
+
+        <!-- Visualizador de Estrutura Semântica -->
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Diagrama Visual: Arquitetura Semântica</span>
+            <span class="badge badge-success">Diagrama Interativo</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; border: 2px dashed var(--border-strong); padding: 0.75rem; border-radius: var(--radius-md);">
+                
+                <div style="background-color: rgba(99, 102, 241, 0.2); border: 1px solid var(--brand-primary); padding: 0.5rem; text-align: center; border-radius: var(--radius-sm); font-weight: bold; font-size: 0.8rem;">
+                  &lt;header&gt;
+                  <div style="background-color: rgba(6, 182, 212, 0.2); border: 1px solid var(--brand-accent); margin-top: 0.35rem; padding: 0.25rem; font-size: 0.75rem;">
+                    &lt;nav&gt; Links de Navegação Principal &lt;/nav&gt;
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.5rem;">
+                  <div style="background-color: rgba(16, 185, 129, 0.15); border: 1px solid var(--color-success); padding: 0.5rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                    <strong>&lt;main&gt;</strong> (Conteúdo Central da Página)
+                    <div style="background-color: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 0.4rem; margin-top: 0.4rem; border-radius: 4px; font-size: 0.75rem;">
+                      &lt;article&gt; (Post, produto ou item independente)
+                      <div style="margin-top: 0.25rem; font-style: italic; color: var(--text-dim);">&lt;section&gt; Seção de Comentários &lt;/section&gt;</div>
+                    </div>
+                  </div>
+
+                  <div style="background-color: rgba(245, 158, 11, 0.15); border: 1px solid var(--color-warning); padding: 0.5rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                    <strong>&lt;aside&gt;</strong><br>
+                    <small>Barra lateral, links correlatos ou publicidade.</small>
+                  </div>
+                </div>
+
+                <div style="background-color: rgba(107, 114, 128, 0.2); border: 1px solid var(--border-strong); padding: 0.5rem; text-align: center; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                  &lt;footer&gt; Rodapé, Direitos Autorais, Links Legais
+                </div>
+
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-tag">&lt;header&gt;</span>
+  <span class="c-tag">&lt;h1&gt;</span>Meu Blog Tecnológico<span class="c-tag">&lt;/h1&gt;</span>
+  <span class="c-tag">&lt;nav</span> <span class="c-attr">aria-label</span>=<span class="c-val">"Navegação Principal"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;ul&gt;</span>
+      <span class="c-tag">&lt;li&gt;&lt;a</span> <span class="c-attr">href</span>=<span class="c-val">"/"</span><span class="c-tag">&gt;</span>Home<span class="c-tag">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="c-tag">&lt;li&gt;&lt;a</span> <span class="c-attr">href</span>=<span class="c-val">"/artigos"</span><span class="c-tag">&gt;</span>Artigos<span class="c-tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="c-tag">&lt;/ul&gt;</span>
+  <span class="c-tag">&lt;/nav&gt;</span>
+<span class="c-tag">&lt;/header&gt;</span>
+
+<span class="c-tag">&lt;main&gt;</span>
+  <span class="c-tag">&lt;article&gt;</span>
+    <span class="c-tag">&lt;h2&gt;</span>Como Funciona o CSS Moderno<span class="c-tag">&lt;/h2&gt;</span>
+    <span class="c-tag">&lt;p&gt;</span>Texto completo do artigo aqui...<span class="c-tag">&lt;/p&gt;</span>
+  <span class="c-tag">&lt;/article&gt;</span>
+
+  <span class="c-tag">&lt;aside&gt;</span>
+    <span class="c-tag">&lt;h3&gt;</span>Tópicos Relacionados<span class="c-tag">&lt;/h3&gt;</span>
+  <span class="c-tag">&lt;/aside&gt;</span>
+<span class="c-tag">&lt;/main&gt;</span>
+
+<span class="c-tag">&lt;footer&gt;</span>
+  <span class="c-tag">&lt;p&gt;</span>&amp;copy; 2026 - Todos os direitos reservados.<span class="c-tag">&lt;/p&gt;</span>
+<span class="c-tag">&lt;/footer&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 4: TIPOGRAFIA, TEXTO E FORMATAÇÃO INLINE
+           ====================================================================== -->
+      <section id="text-formatting" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">4. Tipografia, Textos e Semântica Inline</h2>
+          <span class="section-tag">&lt;strong&gt; &lt;em&gt; &lt;mark&gt; &lt;code&gt; &lt;kbd&gt; &lt;time&gt;</span>
+        </div>
+        <p class="section-desc">
+          O HTML possui mais de 25 tags específicas para atribuir sentido exato a partes de um texto. Veja as mais poderosas e frequentemente esquecidas:
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Demonstração das Tags de Texto em Ação</span>
+            <span class="badge badge-primary">Inline Elements</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p>
+                Este texto tem <strong>forte importância semântica (&lt;strong&gt;)</strong>, enquanto este possui apenas <em>ênfase de leitura (&lt;em&gt;)</em>.
+              </p>
+              <p>
+                Podemos destacar com <mark style="background-color: #fef08a; color: #713f12; padding: 2px 6px; border-radius: 4px;">&lt;mark&gt; texto realçado&lt;/mark&gt;</mark>, indicar preço antigo <del>R$ 199,00 (&lt;del&gt;)</del> e novo preço <ins style="color: var(--color-success);">&lt;ins&gt;R$ 99,00&lt;/ins&gt;</ins>.
+              </p>
+              <p>
+                Fórmulas científicas: H<sub>2</sub>O (&lt;sub&gt;) ou E = mc<sup>2</sup> (&lt;sup&gt;).
+              </p>
+              <p>
+                Atalho de teclado no sistema: Pressione 
+                <kbd style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border-strong); border-bottom-width: 3px; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.8rem;">Ctrl</kbd> + 
+                <kbd style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border-strong); border-bottom-width: 3px; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.8rem;">K</kbd> 
+                para buscar.
+              </p>
+              <p>
+                Abreviação acessível: <abbr title="HyperText Markup Language" class="has-tooltip" data-tooltip="HyperText Markup Language">HTML5</abbr>.
+              </p>
+              <p>
+                Data legível por máquina: <time datetime="2026-10-17">17 de Outubro de 2026</time>.
+              </p>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-tag">&lt;p&gt;</span>
+  <span class="c-tag">&lt;strong&gt;</span>Importância alta<span class="c-tag">&lt;/strong&gt;</span> e <span class="c-tag">&lt;em&gt;</span>ênfase<span class="c-tag">&lt;/em&gt;</span>.
+  <span class="c-tag">&lt;mark&gt;</span>Texto destacado<span class="c-tag">&lt;/mark&gt;</span>.
+  De <span class="c-tag">&lt;del&gt;</span>R$ 199<span class="c-tag">&lt;/del&gt;</span> por <span class="c-tag">&lt;ins&gt;</span>R$ 99<span class="c-tag">&lt;/ins&gt;</span>.
+  H<span class="c-tag">&lt;sub&gt;</span>2<span class="c-tag">&lt;/sub&gt;</span>O e E = mc<span class="c-tag">&lt;sup&gt;</span>2<span class="c-tag">&lt;/sup&gt;</span>.
+  Pressione <span class="c-tag">&lt;kbd&gt;</span>Ctrl<span class="c-tag">&lt;/kbd&gt;</span> + <span class="c-tag">&lt;kbd&gt;</span>K<span class="c-tag">&lt;/kbd&gt;</span>.
+  <span class="c-tag">&lt;abbr</span> <span class="c-attr">title</span>=<span class="c-val">"HyperText Markup Language"</span><span class="c-tag">&gt;</span>HTML<span class="c-tag">&lt;/abbr&gt;</span>.
+  <span class="c-tag">&lt;time</span> <span class="c-attr">datetime</span>=<span class="c-val">"2026-10-17"</span><span class="c-tag">&gt;</span>Hoje<span class="c-tag">&lt;/time&gt;</span>.
+<span class="c-tag">&lt;/p&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 5: LISTAS & DETALHES NATIVOS
+           ====================================================================== -->
+      <section id="lists-details" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">5. Listas & O Poder do &lt;details&gt; (Accordion sem JS)</h2>
+          <span class="section-tag">&lt;ul&gt; &lt;ol&gt; &lt;dl&gt; &lt;details&gt; &lt;summary&gt;</span>
+        </div>
+        <p class="section-desc">
+          Além das tradicionais listas com bolinhas (<code>&lt;ul&gt;</code>) e números (<code>&lt;ol&gt;</code>), o HTML possui a tag <code>&lt;dl&gt;</code> (Definition List) e o revolucionário conjunto <code>&lt;details&gt;</code> + <code>&lt;summary&gt;</code> que cria sanfonas interativas 100% nativas!
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Accordion Nativo com &lt;details&gt; e Lista de Definições</span>
+            <span class="badge badge-success">Zero JavaScript</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              
+              <!-- Accordion Nativo -->
+              <details class="custom-accordion" open>
+                <summary>O que é o elemento &lt;details&gt;?</summary>
+                <div class="accordion-body">
+                  É um widget de divulgação nativo do navegador. O usuário clica e ele se abre ou fecha automaticamente, com suporte total a teclado e leitores de tela sem uma única linha de JavaScript!
+                </div>
+              </details>
+
+              <details class="custom-accordion">
+                <summary>Como animar a abertura no CSS moderno?</summary>
+                <div class="accordion-body">
+                  No CSS moderno você pode estilizar <code>details[open]</code> ou usar a pseudo-classe <code>::details-content</code> para transições suaves.
+                </div>
+              </details>
+
+              <!-- Lista de Definições (DL / DT / DD) -->
+              <div style="margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+                <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--brand-accent);">Lista de Definição (&lt;dl&gt;):</h4>
+                <dl style="display: grid; grid-template-columns: 80px 1fr; gap: 0.5rem; font-size: 0.85rem;">
+                  <dt style="font-weight: bold; color: var(--text-main);">&lt;dt&gt; HTML</dt>
+                  <dd style="color: var(--text-muted); margin: 0;">Linguagem de marcação para hipertexto.</dd>
+                  <dt style="font-weight: bold; color: var(--text-main);">&lt;dt&gt; CSS</dt>
+                  <dd style="color: var(--text-muted); margin: 0;">Folhas de estilo em cascata para design.</dd>
+                </dl>
+              </div>
+
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Accordion Nativo sem JS --&gt;</span>
+<span class="c-tag">&lt;details&gt;</span>
+  <span class="c-tag">&lt;summary&gt;</span>Título da Pergunta Frequente<span class="c-tag">&lt;/summary&gt;</span>
+  <span class="c-tag">&lt;p&gt;</span>Resposta detalhada que se expande ao clicar.<span class="c-tag">&lt;/p&gt;</span>
+<span class="c-tag">&lt;/details&gt;</span>
+
+<span class="c-comment">&lt;!-- Lista de Definição (Pares Chave/Valor) --&gt;</span>
+<span class="c-tag">&lt;dl&gt;</span>
+  <span class="c-tag">&lt;dt&gt;</span>API<span class="c-tag">&lt;/dt&gt;</span>
+  <span class="c-tag">&lt;dd&gt;</span>Application Programming Interface.<span class="c-tag">&lt;/dd&gt;</span>
+
+  <span class="c-tag">&lt;dt&gt;</span>DOM<span class="c-tag">&lt;/dt&gt;</span>
+  <span class="c-tag">&lt;dd&gt;</span>Document Object Model.<span class="c-tag">&lt;/dd&gt;</span>
+<span class="c-tag">&lt;/dl&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 6: MÍDIA, IMAGENS & GRÁFICOS
+           ====================================================================== -->
+      <section id="media-graphics" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">6. Mídia Responsiva, Áudio, Vídeo e Imagens</h2>
+          <span class="section-tag">&lt;picture&gt; &lt;img&gt; &lt;audio&gt; &lt;video&gt; &lt;figure&gt;</span>
+        </div>
+        <p class="section-desc">
+          Performance na web depende diretamente de como você serve mídia. Use <code>loading="lazy"</code>, <code>aspect-ratio</code> e <code>&lt;picture&gt;</code> para servir a imagem certa na tela certa.
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Mídia Rica: Figure, Áudio e Vídeo Nativos</span>
+            <span class="badge badge-primary">Media API</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <!-- Figure com Legenda -->
+              <figure style="margin: 0; background-color: var(--bg-surface-elevated); padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <div style="background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: var(--radius-sm); padding: 1.5rem; text-align: center; color: #a5b4fc; font-weight: 600;">
+                  🖼️ Ilustração Vetorial com &lt;figure&gt;
+                </div>
+                <figcaption style="font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-top: 0.5rem;">
+                  Figura 1.0: Diagrama renderizado usando a tag semântica &lt;figcaption&gt;.
+                </figcaption>
+              </figure>
+
+              <!-- Áudio Nativo -->
+              <div style="margin-top: 0.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Player de Áudio (&lt;audio controls&gt;):</label>
+                <audio controls style="width: 100%; height: 38px;">
+                  <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=" type="audio/wav">
+                  Seu navegador não suporta áudio nativo.
+                </audio>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Imagem moderna com boas práticas de performance --&gt;</span>
+<span class="c-tag">&lt;picture&gt;</span>
+  <span class="c-tag">&lt;source</span> <span class="c-attr">srcset</span>=<span class="c-val">"foto-dark.avif"</span> <span class="c-attr">media</span>=<span class="c-val">"(prefers-color-scheme: dark)"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;source</span> <span class="c-attr">srcset</span>=<span class="c-val">"foto.webp"</span> <span class="c-attr">type</span>=<span class="c-val">"image/webp"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;img</span> <span class="c-attr">src</span>=<span class="c-val">"foto.jpg"</span> 
+       <span class="c-attr">alt</span>=<span class="c-val">"Descrição acessível da foto"</span>
+       <span class="c-attr">loading</span>=<span class="c-val">"lazy"</span>
+       <span class="c-attr">decoding</span>=<span class="c-val">"async"</span>
+       <span class="c-attr">width</span>=<span class="c-val">"600"</span> <span class="c-attr">height</span>=<span class="c-val">"400"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;/picture&gt;</span>
+
+<span class="c-comment">&lt;!-- Vídeo com suporte a legendas acessíveis --&gt;</span>
+<span class="c-tag">&lt;video</span> <span class="c-attr">controls</span> <span class="c-attr">poster</span>=<span class="c-val">"thumb.jpg"</span> <span class="c-attr">preload</span>=<span class="c-val">"metadata"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;source</span> <span class="c-attr">src</span>=<span class="c-val">"video.mp4"</span> <span class="c-attr">type</span>=<span class="c-val">"video/mp4"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;track</span> <span class="c-attr">kind</span>=<span class="c-val">"subtitles"</span> <span class="c-attr">src</span>=<span class="c-val">"legenda.vtt"</span> <span class="c-attr">srclang</span>=<span class="c-val">"pt"</span> <span class="c-attr">label</span>=<span class="c-val">"Português"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;/video&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 7: TABELAS RESPONSIVAS
+           ====================================================================== -->
+      <section id="tables-section" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">7. Tabelas de Dados Completas & Acessíveis</h2>
+          <span class="section-tag">&lt;table&gt; &lt;caption&gt; &lt;thead&gt; &lt;th scope=""&gt; &lt;tfoot&gt;</span>
+        </div>
+        <p class="section-desc">
+          Tabelas são feitas para **dados tabulares**, e nunca para layout de página. Uma tabela moderna e acessível exige cabeçalhos com o atributo <code>scope</code>, legenda com <code>&lt;caption&gt;</code> e suporte a rolagem em telas pequenas.
+        </p>
+
+        <div class="table-responsive-wrapper">
+          <table class="data-table">
+            <caption>Relatório Mensal de Desempenho e Tráfego</caption>
+            <thead>
+              <tr>
+                <th scope="col">Mês</th>
+                <th scope="col">Visualizações</th>
+                <th scope="col">Taxa de Conversão</th>
+                <th scope="col">Status</th>
+                <th scope="col">Receita</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Janeiro</th>
+                <td>124.500</td>
+                <td>3.4%</td>
+                <td><span class="badge badge-success">Meta Batida</span></td>
+                <td>R$ 45.200,00</td>
+              </tr>
+              <tr>
+                <th scope="row">Fevereiro</th>
+                <td>98.200</td>
+                <td>2.8%</td>
+                <td><span class="badge badge-warning">Atenção</span></td>
+                <td>R$ 31.800,00</td>
+              </tr>
+              <tr>
+                <th scope="row">Março</th>
+                <td>189.400</td>
+                <td>4.9%</td>
+                <td><span class="badge badge-success">Recorde</span></td>
+                <td>R$ 78.600,00</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">Média / Total</th>
+                <td>412.100 total</td>
+                <td>3.7% méd.</td>
+                <td><span class="badge badge-primary">Positivo</span></td>
+                <td>R$ 155.600,00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 8: O MESTRE DOS FORMULÁRIOS (INPUTS & TIPOS)
+           ====================================================================== -->
+      <section id="form-inputs" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">8. O Mestre dos Formulários: Todos os Tipos de &lt;input&gt;</h2>
+          <span class="section-tag">&lt;form&gt; &lt;input type="..."&gt; &lt;label&gt;</span>
+        </div>
+        <p class="section-desc">
+          O formulário HTML5 moderno possui teclados inteligentes em celulares (abrindo teclado numérico para <code>tel</code>/<code>number</code>, ou teclado com arroba para <code>email</code>).
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Laboratório de Tipos de Input</span>
+            <span class="badge badge-primary">Coleção Completa</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <form id="demo-inputs-form" onsubmit="event.preventDefault(); showToast('Formulário de teste enviado com sucesso!');">
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="inp-text">Texto Padrão (type="text")</label>
+                    <input class="form-control" type="text" id="inp-text" placeholder="Ex: João Silva" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="inp-pass">Senha (type="password")</label>
+                    <input class="form-control" type="password" id="inp-pass" placeholder="••••••••" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="inp-email">E-mail (type="email")</label>
+                    <input class="form-control" type="email" id="inp-email" placeholder="nome@dominio.com" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="inp-num">Número (type="number" min="1" max="100")</label>
+                    <input class="form-control" type="number" id="inp-num" min="1" max="100" value="25">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="inp-date">Data (type="date")</label>
+                    <input class="form-control" type="date" id="inp-date">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="inp-time">Hora (type="time")</label>
+                    <input class="form-control" type="time" id="inp-time">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="inp-color">Seletor de Cor (type="color")</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                      <input type="color" id="inp-color" value="#6366f1" style="height: 40px; width: 60px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); cursor: pointer; background: none;">
+                      <span id="color-hex-display" style="font-family: var(--font-mono); font-size: 0.85rem;">#6366f1</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="inp-range">
+                      Range / Slider (type="range")
+                      <span id="range-val" class="badge badge-primary">50%</span>
+                    </label>
+                    <input type="range" id="inp-range" min="0" max="100" value="50" oninput="document.getElementById('range-val').innerText = this.value + '%'">
+                  </div>
+                </div>
+
+                <!-- Campo com Datalist (Autocomplete Nativo) -->
+                <div class="form-group">
+                  <label class="form-label" for="inp-datalist">
+                    Busca com &lt;datalist&gt; (Autocomplete Nativo sem JS!)
+                  </label>
+                  <input class="form-control" list="navegadores" id="inp-datalist" placeholder="Comece a digitar Chrome, Firefox...">
+                  <datalist id="navegadores">
+                    <option value="Google Chrome">
+                    <option value="Mozilla Firefox">
+                    <option value="Apple Safari">
+                    <option value="Microsoft Edge">
+                    <option value="Brave Browser">
+                  </datalist>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                  Validar e Submeter Campos
+                </button>
+              </form>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Associação correta de label com id do input --&gt;</span>
+<span class="c-tag">&lt;label</span> <span class="c-attr">for</span>=<span class="c-val">"email"</span><span class="c-tag">&gt;</span>E-mail Comercial:<span class="c-tag">&lt;/label&gt;</span>
+<span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"email"</span> <span class="c-attr">id</span>=<span class="c-val">"email"</span> <span class="c-attr">name</span>=<span class="c-val">"email"</span> <span class="c-attr">required</span><span class="c-tag">&gt;</span>
+
+<span class="c-comment">&lt;!-- Input com sugestões via &lt;datalist&gt; nativo --&gt;</span>
+<span class="c-tag">&lt;input</span> <span class="c-attr">list</span>=<span class="c-val">"cidades"</span> <span class="c-attr">name</span>=<span class="c-val">"cidade"</span> <span class="c-attr">placeholder</span>=<span class="c-val">"Selecione..."</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;datalist</span> <span class="c-attr">id</span>=<span class="c-val">"cidades"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;option</span> <span class="c-attr">value</span>=<span class="c-val">"São Paulo"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;option</span> <span class="c-attr">value</span>=<span class="c-val">"Rio de Janeiro"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;option</span> <span class="c-attr">value</span>=<span class="c-val">"Belo Horizonte"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;/datalist&gt;</span>
+
+<span class="c-comment">&lt;!-- Controle deslizante com saída de valor --&gt;</span>
+<span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"range"</span> <span class="c-attr">id</span>=<span class="c-val">"vol"</span> <span class="c-attr">min</span>=<span class="c-val">"0"</span> <span class="c-attr">max</span>=<span class="c-val">"100"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;output</span> <span class="c-attr">for</span>=<span class="c-val">"vol"</span><span class="c-tag">&gt;</span>50<span class="c-tag">&lt;/output&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 9: SELECTS, RADIOS & CHECKBOXES
+           ====================================================================== -->
+      <section id="form-selectors" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">9. Selects com Grupos, Radios, Checkboxes e Toggles</h2>
+          <span class="section-tag">&lt;select&gt; &lt;optgroup&gt; &lt;fieldset&gt;</span>
+        </div>
+        <p class="section-desc">
+          Elementos de seleção múltipla ou mutuamente exclusiva organizados com <code>&lt;fieldset&gt;</code> e <code>&lt;legend&gt;</code> para acessibilidade de leitores de tela.
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Seleções Estilizadas com CSS Vanilla</span>
+            <span class="badge badge-success">UI Moderna</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              
+              <!-- Select com Optgroup -->
+              <div class="form-group">
+                <label class="form-label" for="sel-cidade">Cidade por Estado (&lt;optgroup&gt;):</label>
+                <select class="form-control" id="sel-cidade">
+                  <option value="" disabled selected>Escolha uma localidade...</option>
+                  <optgroup label="Região Sudeste">
+                    <option value="sp">São Paulo (SP)</option>
+                    <option value="rj">Rio de Janeiro (RJ)</option>
+                    <option value="mg">Belo Horizonte (MG)</option>
+                  </optgroup>
+                  <optgroup label="Região Sul">
+                    <option value="pr">Curitiba (PR)</option>
+                    <option value="sc">Florianópolis (SC)</option>
+                    <option value="rs">Porto Alegre (RS)</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <!-- Fieldset de Radios -->
+              <fieldset class="custom-fieldset">
+                <legend class="custom-legend">Plano de Assinatura (Radio)</legend>
+                <div class="custom-check-group">
+                  <label class="custom-check-item">
+                    <input type="radio" name="plano" value="starter" checked>
+                    <span><strong>Starter:</strong> Gratuito para até 3 projetos</span>
+                  </label>
+                  <label class="custom-check-item">
+                    <input type="radio" name="plano" value="pro">
+                    <span><strong>Pro:</strong> R$ 49/mês com recursos ilimitados</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <!-- Switch / Toggle Moderno -->
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="switch-label">
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Receber novidades por e-mail</div>
+                    <div class="form-hint">Enviaremos dicas semanais de front-end.</div>
+                  </div>
+                  <input type="checkbox" class="switch-input" checked>
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Select com grupos de opções semânticos --&gt;</span>
+<span class="c-tag">&lt;select</span> <span class="c-attr">name</span>=<span class="c-val">"cidade"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;optgroup</span> <span class="c-attr">label</span>=<span class="c-val">"Sudeste"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;option</span> <span class="c-attr">value</span>=<span class="c-val">"sp"</span><span class="c-tag">&gt;</span>São Paulo<span class="c-tag">&lt;/option&gt;</span>
+  <span class="c-tag">&lt;/optgroup&gt;</span>
+  <span class="c-tag">&lt;optgroup</span> <span class="c-attr">label</span>=<span class="c-val">"Sul"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;option</span> <span class="c-attr">value</span>=<span class="c-val">"pr"</span><span class="c-tag">&gt;</span>Curitiba<span class="c-tag">&lt;/option&gt;</span>
+  <span class="c-tag">&lt;/optgroup&gt;</span>
+<span class="c-tag">&lt;/select&gt;</span>
+
+<span class="c-comment">&lt;!-- Agrupamento acessível com Fieldset e Legend --&gt;</span>
+<span class="c-tag">&lt;fieldset&gt;</span>
+  <span class="c-tag">&lt;legend&gt;</span>Escolha seu Plano<span class="c-tag">&lt;/legend&gt;</span>
+  <span class="c-tag">&lt;label&gt;&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"radio"</span> <span class="c-attr">name</span>=<span class="c-val">"p"</span> <span class="c-attr">value</span>=<span class="c-val">"1"</span><span class="c-tag">&gt;</span> Básico<span class="c-tag">&lt;/label&gt;</span>
+  <span class="c-tag">&lt;label&gt;&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"radio"</span> <span class="c-attr">name</span>=<span class="c-val">"p"</span> <span class="c-attr">value</span>=<span class="c-val">"2"</span><span class="c-tag">&gt;</span> Pro<span class="c-tag">&lt;/label&gt;</span>
+<span class="c-tag">&lt;/fieldset&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 10: VALIDAÇÃO NATIVA DO HTML5
+           ====================================================================== -->
+      <section id="form-validation" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">10. Validação Nativa do HTML5 & Pseudo-classes CSS</h2>
+          <span class="section-tag">:valid :invalid :user-invalid pattern="..."</span>
+        </div>
+        <p class="section-desc">
+          Você não precisa de bibliotecas de validação pesadas para formulários simples. O próprio navegador valida expressões regulares (<code>pattern</code>), comprimentos e formatos, fornecendo feedback visual com seletores CSS modernos.
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Validação Instantânea com CSS :user-valid e :user-invalid</span>
+            <span class="badge badge-warning">Padrão Moderno</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <form id="val-form" onsubmit="event.preventDefault(); showToast('Formulário 100% válido!');">
+                
+                <div class="form-group">
+                  <label class="form-label" for="val-cpf">
+                    CPF (Formato: 000.000.000-00)
+                    <span class="form-hint">Regex nativa</span>
+                  </label>
+                  <input class="form-control" 
+                         type="text" 
+                         id="val-cpf" 
+                         pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" 
+                         placeholder="123.456.789-00" 
+                         title="Digite no formato 123.456.789-00"
+                         required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="val-cep">
+                    CEP Brasileiro (00000-000)
+                  </label>
+                  <input class="form-control" 
+                         type="text" 
+                         id="val-cep" 
+                         pattern="\d{5}-\d{3}" 
+                         placeholder="01001-000" 
+                         required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="val-nota">
+                    Nota de 0 a 10 (step="0.5")
+                  </label>
+                  <input class="form-control" 
+                         type="number" 
+                         id="val-nota" 
+                         min="0" 
+                         max="10" 
+                         step="0.5" 
+                         value="8.5"
+                         required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                  Testar Validação Nativa
+                </button>
+              </form>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* CSS que reage automaticamente ao estado do campo */</span>
+<span class="c-prop">.form-control:user-invalid</span> {
+  <span class="c-attr">border-color</span>: <span class="c-val">#ef4444</span>;
+  <span class="c-attr">box-shadow</span>: <span class="c-val">0 0 0 3px rgba(239, 68, 68, 0.2)</span>;
+}
+
+<span class="c-prop">.form-control:user-valid:not(:placeholder-shown)</span> {
+  <span class="c-attr">border-color</span>: <span class="c-val">#10b981</span>;
+}
+
+<span class="c-comment">&lt;!-- Input com validação via expressão regular nativa --&gt;</span>
+<span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"text"</span> 
+       <span class="c-attr">pattern</span>=<span class="c-val">"\d{3}\.\d{3}\.\d{3}-\d{2}"</span> 
+       <span class="c-attr">title</span>=<span class="c-val">"Formato: 000.000.000-00"</span> 
+       <span class="c-attr">required</span><span class="c-tag">&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 11: SEÇÃO PRÁTICA REAL - PAINEL DE CONFIGURAÇÕES (SETUP MENU)
+           ====================================================================== -->
+      <section id="setup-menu" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">11. Seção Prática: Painel de Configurações (Setup Menu)</h2>
+          <span class="section-tag">UI do Mundo Real</span>
+        </div>
+        <p class="section-desc">
+          Um exemplo clássico de sistema SaaS ou painel administrativo construído com HTML semântico e CSS flexbox/grid moderno. Todas as abas e controles funcionam interativamente!
+        </p>
+
+        <div class="settings-panel">
+          <!-- Navegação das Abas do Setup -->
+          <nav class="settings-nav" aria-label="Menu de Configurações">
+            <button class="settings-nav-btn active" onclick="switchSettingsTab(event, 'tab-geral')">
+              👤 Perfil & Geral
+            </button>
+            <button class="settings-nav-btn" onclick="switchSettingsTab(event, 'tab-aparencia')">
+              🎨 Aparência & Tema
+            </button>
+            <button class="settings-nav-btn" onclick="switchSettingsTab(event, 'tab-seguranca')">
+              🔒 Segurança & Senha
+            </button>
+            <button class="settings-nav-btn" onclick="switchSettingsTab(event, 'tab-notificacoes')">
+              🔔 Notificações
+            </button>
+          </nav>
+
+          <!-- Conteúdo da Aba: Geral -->
+          <div id="tab-geral" class="settings-tab-content active">
+            <h3 style="margin-bottom: 0.25rem;">Informações do Perfil</h3>
+            <p class="form-hint" style="margin-bottom: 1.5rem;">Atualize sua foto pública e detalhes de exibição da conta.</p>
+
+            <div class="avatar-upload-area">
+              <div class="avatar-preview" id="user-avatar-display">AG</div>
+              <div>
+                <label for="avatar-file" class="btn btn-secondary" style="font-size: 0.8rem; margin-bottom: 0.4rem; display: inline-flex;">
+                  📷 Carregar Nova Imagem
+                </label>
+                <input type="file" id="avatar-file" accept="image/*" style="display: none;" onchange="previewAvatar(event)">
+                <div class="form-hint">Formatos suportados: PNG, JPG ou WebP (máx. 2MB).</div>
+              </div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); showToast('Configurações gerais salvas com sucesso!');">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="setup-username">Nome de Usuário</label>
+                  <input class="form-control" type="text" id="setup-username" value="mateus_dev" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="setup-fullname">Nome Completo</label>
+                  <input class="form-control" type="text" id="setup-fullname" value="Mateus Desenvolvedor">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="setup-bio">Biografia Profissional</label>
+                <textarea class="form-control" id="setup-bio" rows="3" placeholder="Escreva um breve resumo sobre você...">Desenvolvedor apaixonado por HTML5 semântico, CSS puro e acessibilidade na web.</textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="setup-tz">Fuso Horário</label>
+                  <select class="form-control" id="setup-tz">
+                    <option value="America/Sao_Paulo" selected>Brasília (GMT-3)</option>
+                    <option value="UTC">UTC (GMT+0)</option>
+                    <option value="America/New_York">Nova York (GMT-5)</option>
+                    <option value="Europe/Lisbon">Lisboa (GMT+1)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="setup-lang">Idioma da Interface</label>
+                  <select class="form-control" id="setup-lang">
+                    <option value="pt-BR" selected>Português (Brasil)</option>
+                    <option value="en-US">English (US)</option>
+                    <option value="es-ES">Español</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem;">
+                <button type="reset" class="btn btn-ghost">Descartar</button>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Conteúdo da Aba: Aparência -->
+          <div id="tab-aparencia" class="settings-tab-content">
+            <h3 style="margin-bottom: 0.25rem;">Preferências de Interface</h3>
+            <p class="form-hint" style="margin-bottom: 1.5rem;">Ajuste o contraste, tema e densidade dos elementos visuais.</p>
+
+            <div class="form-group">
+              <label class="switch-label">
+                <div>
+                  <div style="font-weight: 600;">Modo Escuro Forçado</div>
+                  <div class="form-hint">Substitui a preferência do sistema operacional por este dispositivo.</div>
+                </div>
+                <input type="checkbox" class="switch-input" id="setup-dark-mode" checked onchange="toggleThemeManual(this.checked)">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="switch-label">
+                <div>
+                  <div style="font-weight: 600;">Reduzir Animações (prefers-reduced-motion)</div>
+                  <div class="form-hint">Desativa transições para economizar bateria e melhorar o conforto visual.</div>
+                </div>
+                <input type="checkbox" class="switch-input">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setup-fontsize">Tamanho da Fonte da Interface</label>
+              <input type="range" id="setup-fontsize" min="14" max="20" value="16" oninput="document.documentElement.style.fontSize = this.value + 'px'; document.getElementById('lbl-fsize').innerText = this.value + 'px'">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem;">
+                <span>14px (Compacto)</span>
+                <span id="lbl-fsize" style="font-weight: bold; color: var(--brand-primary);">16px</span>
+                <span>20px (Grande)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conteúdo da Aba: Segurança -->
+          <div id="tab-seguranca" class="settings-tab-content">
+            <h3 style="margin-bottom: 0.25rem;">Segurança da Conta</h3>
+            <p class="form-hint" style="margin-bottom: 1.5rem;">Gerencie sua senha e autenticação de dois fatores.</p>
+
+            <form onsubmit="event.preventDefault(); showToast('Senha atualizada com sucesso!');">
+              <div class="form-group">
+                <label class="form-label" for="setup-cur-pass">Senha Atual</label>
+                <input class="form-control" type="password" id="setup-cur-pass" placeholder="••••••••" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="setup-new-pass">Nova Senha</label>
+                  <input class="form-control" type="password" id="setup-new-pass" minlength="8" placeholder="Mínimo 8 dígitos" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="setup-conf-pass">Confirmar Nova Senha</label>
+                  <input class="form-control" type="password" id="setup-conf-pass" minlength="8" placeholder="Repita a senha" required>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-secondary">Atualizar Senha</button>
+            </form>
+
+            <!-- Zona de Perigo -->
+            <div class="danger-zone">
+              <div class="danger-zone-title">⚠️ Zona de Perigo</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                A exclusão da sua conta apagará permanentemente todos os seus dados e configurações registradas.
+              </p>
+              <button class="btn btn-danger" onclick="openDeleteDialog()">Excluir Minha Conta Permanentemente</button>
+            </div>
+          </div>
+
+          <!-- Conteúdo da Aba: Notificações -->
+          <div id="tab-notificacoes" class="settings-tab-content">
+            <h3 style="margin-bottom: 0.25rem;">Preferências de Notificações</h3>
+            <p class="form-hint" style="margin-bottom: 1.5rem;">Escolha como e quando você deseja ser notificado.</p>
+
+            <div class="custom-check-group">
+              <label class="custom-check-item">
+                <input type="checkbox" checked>
+                <span>Notificações push em tempo real no navegador</span>
+              </label>
+              <label class="custom-check-item">
+                <input type="checkbox" checked>
+                <span>Resumo semanal de atividades por e-mail</span>
+              </label>
+              <label class="custom-check-item">
+                <input type="checkbox">
+                <span>Alertas promocionais e novidades de produtos parceiros</span>
+              </label>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <button class="btn btn-primary" onclick="showToast('Preferências de notificação salvas!')">Salvar Notificações</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 12: MODAIS & DIÁLOGOS NATIVOS COM <dialog>
+           ====================================================================== -->
+      <section id="dialog-modals" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">12. Modais & Janelas Nativas com a tag &lt;dialog&gt;</h2>
+          <span class="section-tag">&lt;dialog&gt; showModal() ::backdrop</span>
+        </div>
+        <p class="section-desc">
+          Antigamente, criar um modal exigia centenas de linhas de CSS fixo, `z-index: 999999` e hacks para prender o foco do teclado. Hoje, o elemento nativo <code>&lt;dialog&gt;</code> resolve tudo isso automaticamente com suporte nativo à tecla <kbd>Esc</kbd>!
+        </p>
+
+        <div class="demo-card">
+          <div class="demo-header">
+            <span class="demo-title">Demonstração Interativa do &lt;dialog&gt;</span>
+            <span class="badge badge-primary">HTML5 Moderno</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p>Clique no botão abaixo para abrir a janela modal nativa do navegador:</p>
+              <button class="btn btn-primary" onclick="document.getElementById('meu-dialogo-demo').showModal()">
+                🚀 Abrir Modal Nativo
+              </button>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">&lt;!-- Elemento de diálogo no HTML --&gt;</span>
+<span class="c-tag">&lt;dialog</span> <span class="c-attr">id</span>=<span class="c-val">"meuModal"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;h3&gt;</span>Título da Janela<span class="c-tag">&lt;/h3&gt;</span>
+  <span class="c-tag">&lt;p&gt;</span>Pressione ESC para fechar nativamente!<span class="c-tag">&lt;/p&gt;</span>
+  <span class="c-tag">&lt;form</span> <span class="c-attr">method</span>=<span class="c-val">"dialog"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;button&gt;</span>Fechar<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;/form&gt;</span>
+<span class="c-tag">&lt;/dialog&gt;</span>
+
+<span class="c-comment">/* Estilizando o fundo embaçado com CSS puro */</span>
+<span class="c-prop">dialog::backdrop</span> {
+  <span class="c-attr">background</span>: <span class="c-val">rgba(0, 0, 0, 0.7)</span>;
+  <span class="c-attr">backdrop-filter</span>: <span class="c-val">blur(4px)</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instância Real do Dialog -->
+        <dialog id="meu-dialogo-demo" class="custom-dialog">
+          <div class="dialog-header">
+            <h3>Janela Modal Nativa</h3>
+            <form method="dialog">
+              <button class="btn btn-ghost" style="font-size: 1.25rem; padding: 0.2rem 0.5rem;" aria-label="Fechar">✕</button>
+            </form>
+          </div>
+          <div class="dialog-body">
+            <p style="margin-bottom: 0.75rem;">
+              Esta caixa é renderizada pelo elemento nativo <code>&lt;dialog&gt;</code> na camada superior (<em>Top Layer</em>) do navegador.
+            </p>
+            <p>
+              Vantagens nativas:
+            </p>
+            <ul style="margin-left: 1.25rem; margin-top: 0.5rem;">
+              <li>Prende o foco do teclado dentro do modal (Focus Trap automático).</li>
+              <li>Fecha automaticamente ao apertar a tecla <kbd>Esc</kbd>.</li>
+              <li>O fundo possui estilo nativo via <code>::backdrop</code>.</li>
+            </ul>
+          </div>
+          <div class="dialog-footer">
+            <form method="dialog" style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary">Cancelar</button>
+              <button class="btn btn-primary" value="confirmar">Entendi, Fechar</button>
+            </form>
+          </div>
+        </dialog>
+
+        <!-- Dialog de Exclusão da Conta -->
+        <dialog id="delete-dialog" class="custom-dialog">
+          <div class="dialog-header" style="border-bottom-color: rgba(239,68,68,0.3);">
+            <h3 style="color: var(--color-danger);">Confirmar Exclusão</h3>
+            <form method="dialog">
+              <button class="btn btn-ghost">✕</button>
+            </form>
+          </div>
+          <div class="dialog-body">
+            Tem certeza absoluta que deseja excluir sua conta? Esta ação é irreversível e removerá todos os seus arquivos do servidor.
+          </div>
+          <div class="dialog-footer">
+            <form method="dialog" style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary">Voltar em Segurança</button>
+              <button class="btn btn-danger" onclick="showToast('Ação de teste concluída.')">Sim, Excluir Definitivamente</button>
+            </form>
+          </div>
+        </dialog>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 13: COMPONENTES DO DIA A DIA (CARDS, BADGES, SKELETON)
+           ====================================================================== -->
+      <section id="ui-cards" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">13. Componentes de UI do Dia a Dia</h2>
+          <span class="section-tag">CSS Grid + Flexbox</span>
+        </div>
+        <p class="section-desc">
+          Cards modernos de conteúdo usando <code>grid-template-columns: repeat(auto-fill, minmax(260px, 1fr))</code>, tooltips puros em CSS e barras de carregamento (Skeleton loaders).
+        </p>
+
+        <!-- Grade de Cards Responsivos -->
+        <div class="card-grid" style="margin-bottom: 2rem;">
+          
+          <article class="ui-card">
+            <div class="ui-card-image">⚡</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge badge-primary">Performance</span>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Há 2 horas</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">CSS Grid Subgrid</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">
+              Alinhe itens filhos diretamente à grade dos pais sem quebrar a semântica do documento.
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+              <span class="has-tooltip" data-tooltip="Tempo estimado de leitura">⏱️ 5 min</span>
+              <button class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="showToast('Abrindo artigo...')">Ler Artigo</button>
+            </div>
+          </article>
+
+          <article class="ui-card">
+            <div class="ui-card-image">🎯</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge badge-success">Acessibilidade</span>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Ontem</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">Seletores :has() e :is()</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); flex-grow: 1;">
+              O "seletor pai" finalmente chegou ao CSS moderno nativo, permitindo layouts condicionais elegantes.
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+              <span class="has-tooltip" data-tooltip="Nível intermediário">⭐ Médio</span>
+              <button class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="showToast('Abrindo artigo...')">Ler Artigo</button>
+            </div>
+          </article>
+
+          <!-- Card com Skeleton Loading -->
+          <article class="ui-card">
+            <div class="skeleton-box" style="height: 140px; border-radius: var(--radius-sm);"></div>
+            <div class="skeleton-box" style="width: 40%;"></div>
+            <div class="skeleton-box" style="width: 80%;"></div>
+            <div class="skeleton-box" style="width: 60%; height: 16px;"></div>
+            <div class="skeleton-box" style="width: 100%; height: 32px; margin-top: auto;"></div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 14: CSS3 MODERNO - PRÁTICAS, PADRÕES & TRUQUES ESSENCIAIS
+           ====================================================================== -->
+      <section id="css-mastery" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">14. CSS3 Moderno: Práticas, Padrões &amp; Exemplos Mais Comuns</h2>
+          <span class="section-tag">CSS3 Vanilla &amp; Modern Specs</span>
+        </div>
+        <p class="section-desc">
+          O CSS evoluiu drasticamente. Layouts que antigamente exigiam centenas de linhas de código, hacks de float, bibliotecas de JavaScript ou dezenas de media queries hoje são resolvidos nativamente com poucas linhas e máxima performance. Abaixo estão os padrões fundamentais do dia a dia de um front-end moderno.
+        </p>
+
+        <div class="callout tip">
+          <div class="callout-title">💡 A Filosofia do CSS Moderno</div>
+          O CSS moderno é **orientado a fluidez e resiliência**, não a tamanhos fixos em pixels. Sempre que possível, prefira layouts intrínsecos (que se adaptam ao conteúdo e espaço disponível usando <code>minmax()</code>, <code>clamp()</code> e <code>auto-fit</code>) em vez de escrever dezenas de <code>@media (max-width: ...)</code> manuais.
+        </div>
+
+        <!-- 1. O Reset Moderno & Box-Sizing -->
+        <div class="demo-card" id="css-box-reset">
+          <div class="demo-header">
+            <span class="demo-title">📐 1. O Reset Moderno &amp; A Regra de Ouro do Box-Sizing</span>
+            <span class="badge badge-primary">Fundamento Universal</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.9rem; margin-bottom: 0.75rem;"><strong>Comparação Visual:</strong> O que acontece quando você adiciona <code>padding: 16px</code> em uma caixa com <code>width: 200px</code>?</p>
+              
+              <div style="background: rgba(239, 68, 68, 0.1); border: 2px dashed #ef4444; padding: 0.5rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.75rem; color: #ef4444; font-weight: bold; display: block; margin-bottom: 0.25rem;">❌ content-box (padrão antigo):</span>
+                <div style="box-sizing: content-box; width: 160px; padding: 16px; border: 3px solid #ef4444; background: #3b1111; color: #fca5a5; font-size: 0.8rem; border-radius: 4px;">
+                  Largura real: <strong>198px!</strong><br><span style="font-size: 0.7rem; opacity: 0.8;">(160 + 32 padding + 6 borda) Estoura o layout!</span>
+                </div>
+              </div>
+
+              <div style="background: rgba(16, 185, 129, 0.1); border: 2px dashed #10b981; padding: 0.5rem; border-radius: 6px;">
+                <span style="font-size: 0.75rem; color: #10b981; font-weight: bold; display: block; margin-bottom: 0.25rem;">✅ border-box (padrão moderno obrigatório):</span>
+                <div style="box-sizing: border-box; width: 160px; padding: 16px; border: 3px solid #10b981; background: #062e1e; color: #a7f3d0; font-size: 0.8rem; border-radius: 4px;">
+                  Largura real: <strong>160px!</strong><br><span style="font-size: 0.7rem; opacity: 0.8;">O padding e borda ficam DENTRO do tamanho.</span>
+                </div>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* 1. O Reset Universal Obrigatório */</span>
+<span class="c-sel">*, *::before, *::after</span> {
+  <span class="c-prop">box-sizing</span>: <span class="c-val">border-box</span>; <span class="c-comment">/* Previne 90% dos bugs de overflow */</span>
+  <span class="c-prop">margin</span>: <span class="c-val">0</span>;
+  <span class="c-prop">padding</span>: <span class="c-val">0</span>;
+}
+
+<span class="c-comment">/* 2. Suporte suave a rolagem e Dark/Light nativo */</span>
+<span class="c-sel">html</span> {
+  <span class="c-prop">scroll-behavior</span>: <span class="c-val">smooth</span>;
+  <span class="c-prop">color-scheme</span>: <span class="c-val">dark light</span>;
+  <span class="c-prop">scrollbar-gutter</span>: <span class="c-val">stable</span>; <span class="c-comment">/* Evita salto de tela ao abrir modais */</span>
+}
+
+<span class="c-comment">/* 3. 100dvh resolve o bug da barra de navegação no mobile */</span>
+<span class="c-sel">body</span> {
+  <span class="c-prop">min-height</span>: <span class="c-val">100dvh</span>; <span class="c-comment">/* Dynamic Viewport Height */</span>
+  <span class="c-prop">line-height</span>: <span class="c-val">1.5</span>;
+  <span class="c-prop">-webkit-font-smoothing</span>: <span class="c-val">antialiased</span>;
+}
+
+<span class="c-comment">/* 4. Mídias responsivas que nunca vazam */</span>
+<span class="c-sel">img, picture, video, canvas, svg</span> {
+  <span class="c-prop">display</span>: <span class="c-val">block</span>;
+  <span class="c-prop">max-width</span>: <span class="c-val">100%</span>;
+  <span class="c-prop">height</span>: <span class="c-val">auto</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. As 3 Formas Modernas de Centralizar -->
+        <div class="demo-card" id="css-centering">
+          <div class="demo-header">
+            <span class="demo-title">🎯 2. As 3 Formas Modernas de Centralizar Qualquer Elemento</span>
+            <span class="badge badge-success">Sem Hacks</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Três maneiras limpas e infalíveis de atingir alinhamento horizontal e vertical perfeito:</p>
+              
+              <!-- Preview Grid Centralizado -->
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: grid; place-items: center; height: 70px; background: rgba(99, 102, 241, 0.1); border: 1px solid var(--brand-primary); border-radius: 8px;">
+                  <span style="font-size: 0.8rem; font-weight: 700; color: #a5b4fc; background: var(--bg-surface-elevated); padding: 0.3rem 0.75rem; border-radius: 20px; box-shadow: var(--shadow-sm);">
+                    1. Grid: place-items: center ✨ (1 linha)
+                  </span>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; height: 70px; background: rgba(6, 182, 212, 0.1); border: 1px solid var(--brand-accent); border-radius: 8px;">
+                  <span style="font-size: 0.8rem; font-weight: 700; color: #67e8f9; background: var(--bg-surface-elevated); padding: 0.3rem 0.75rem; border-radius: 20px; box-shadow: var(--shadow-sm);">
+                    2. Flex: justify + align center
+                  </span>
+                </div>
+
+                <div style="position: relative; height: 70px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--color-success); border-radius: 8px;">
+                  <div style="position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #6ee7b7; background: var(--bg-surface-elevated); padding: 0.3rem 0.75rem; border-radius: 20px; box-shadow: var(--shadow-sm);">
+                      3. Inset 0 + Margin Auto (Modais)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* Método 1: CSS Grid (O mais conciso e elegante) */</span>
+<span class="c-sel">.container-grid</span> {
+  <span class="c-prop">display</span>: <span class="c-val">grid</span>;
+  <span class="c-prop">place-items</span>: <span class="c-val">center</span>; <span class="c-comment">/* Centraliza X e Y em uma linha! */</span>
+}
+
+<span class="c-comment">/* Método 2: Flexbox Tradicional */</span>
+<span class="c-sel">.container-flex</span> {
+  <span class="c-prop">display</span>: <span class="c-val">flex</span>;
+  <span class="c-prop">justify-content</span>: <span class="c-val">center</span>; <span class="c-comment">/* Eixo horizontal */</span>
+  <span class="c-prop">align-items</span>: <span class="c-val">center</span>;     <span class="c-comment">/* Eixo vertical */</span>
+}
+<span class="c-comment">/* Dica Pro: Se o pai é flex, basta margin: auto no filho! */</span>
+<span class="c-sel">.flex-child</span> {
+  <span class="c-prop">margin</span>: <span class="c-val">auto</span>;
+}
+
+<span class="c-comment">/* Método 3: Posicionamento Absoluto Moderno com inset */</span>
+<span class="c-sel">.modal-dialog</span> {
+  <span class="c-prop">position</span>: <span class="c-val">fixed</span>;
+  <span class="c-prop">inset</span>: <span class="c-val">0</span>; <span class="c-comment">/* top:0; right:0; bottom:0; left:0; */</span>
+  <span class="c-prop">margin</span>: <span class="c-val">auto</span>;
+  <span class="c-prop">width</span>: <span class="c-val">fit-content</span>;
+  <span class="c-prop">height</span>: <span class="c-val">fit-content</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Flexbox Essencial no Mundo Real -->
+        <div class="demo-card" id="css-flexbox-power">
+          <div class="demo-header">
+            <span class="demo-title">⚡ 3. Flexbox na Prática: Headers, Space-Between &amp; Gap</span>
+            <span class="badge badge-info">Layout Unidimensional</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Exemplo prático de uma barra de navegação completa com espaçamento automático:</p>
+              
+              <!-- Mini Navbar Flex -->
+              <nav style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-surface-elevated); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: bold; font-size: 0.85rem; color: #fff;">
+                  <span style="color: var(--brand-accent);">🚀</span> AppLogo
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                  <span style="color: var(--text-main);">Home</span>
+                  <span>Tutoriais</span>
+                  <span>Docs</span>
+                </div>
+
+                <!-- margin-left: auto empurra para a direita -->
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                  <button class="btn btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">Login</button>
+                  <button class="btn btn-primary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">Criar Conta</button>
+                </div>
+              </nav>
+
+              <!-- Tags com flex-wrap -->
+              <div style="margin-top: 0.75rem;">
+                <span style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 0.35rem;">Tags com quebra de linha fluida (<code>flex-wrap: wrap</code> + <code>gap</code>):</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                  <span class="badge badge-primary">HTML5</span>
+                  <span class="badge badge-info">CSS3 Vanilla</span>
+                  <span class="badge badge-success">Flexbox</span>
+                  <span class="badge badge-warning">Grid Layout</span>
+                  <span class="badge badge-danger">Semântica</span>
+                  <span class="badge badge-primary">Acessibilidade</span>
+                </div>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* Barra de Navegação com Alinhamento Perfeito */</span>
+<span class="c-sel">.navbar</span> {
+  <span class="c-prop">display</span>: <span class="c-val">flex</span>;
+  <span class="c-prop">align-items</span>: <span class="c-val">center</span>;
+  <span class="c-prop">gap</span>: <span class="c-val">1.5rem</span>; <span class="c-comment">/* O gap substitui margin-right em cada filho */</span>
+  <span class="c-prop">padding</span>: <span class="c-val">1rem 1.5rem</span>;
+}
+
+<span class="c-comment">/* O Truque de Ouro: margin-left: auto empurra elementos para a ponta! */</span>
+<span class="c-sel">.navbar-actions</span> {
+  <span class="c-prop">margin-left</span>: <span class="c-val">auto</span>; <span class="c-comment">/* Mágica do Flexbox! */</span>
+  <span class="c-prop">display</span>: <span class="c-val">flex</span>;
+  <span class="c-prop">gap</span>: <span class="c-val">0.75rem</span>;
+}
+
+<span class="c-comment">/* Nuvem de tags ou botões que quebram linha elegantemente */</span>
+<span class="c-sel">.tag-cloud</span> {
+  <span class="c-prop">display</span>: <span class="c-val">flex</span>;
+  <span class="c-prop">flex-wrap</span>: <span class="c-val">wrap</span>; <span class="c-comment">/* Permite pular para a próxima linha */</span>
+  <span class="c-prop">gap</span>: <span class="c-val">0.5rem</span>;      <span class="c-comment">/* Espaçamento perfeito horizontal e vertical */</span>
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. CSS Grid Responsivo Automático (Zero Media Queries) -->
+        <div class="demo-card" id="css-grid-autofit">
+          <div class="demo-header">
+            <span class="demo-title">📊 4. CSS Grid Responsivo com auto-fit (Zero Media Queries!)</span>
+            <span class="badge badge-primary">Layout Bidimensional</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Redimensione a janela ou veja os cards se adaptarem automaticamente entre 1, 2 ou 3 colunas:</p>
+              
+              <!-- Grid Auto-Fit Demo -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)); gap: 0.75rem;">
+                <div style="background: var(--bg-surface-elevated); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle); text-align: center;">
+                  <div style="font-size: 1.2rem; margin-bottom: 0.25rem;">📱</div>
+                  <strong style="font-size: 0.8rem; display: block;">Coluna 1</strong>
+                  <span style="font-size: 0.7rem; color: var(--text-dim);">minmax(120px, 1fr)</span>
+                </div>
+                <div style="background: var(--bg-surface-elevated); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle); text-align: center;">
+                  <div style="font-size: 1.2rem; margin-bottom: 0.25rem;">💻</div>
+                  <strong style="font-size: 0.8rem; display: block;">Coluna 2</strong>
+                  <span style="font-size: 0.7rem; color: var(--text-dim);">minmax(120px, 1fr)</span>
+                </div>
+                <div style="background: var(--bg-surface-elevated); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle); text-align: center;">
+                  <div style="font-size: 1.2rem; margin-bottom: 0.25rem;">🖥️</div>
+                  <strong style="font-size: 0.8rem; display: block;">Coluna 3</strong>
+                  <span style="font-size: 0.7rem; color: var(--text-dim);">minmax(120px, 1fr)</span>
+                </div>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* A Fórmula Mágica de Grid Fluida Sem NENHUMA Media Query */</span>
+<span class="c-sel">.responsive-card-grid</span> {
+  <span class="c-prop">display</span>: <span class="c-val">grid</span>;
+  
+  <span class="c-comment">/* 1. repeat(auto-fit, ...) calcula quantas colunas cabem sozinho
+     2. minmax(min(100%, 280px), 1fr) impede vazamento em telas pequenas
+     3. 1fr faz os cards esticarem para preencher o espaço restante */</span>
+  <span class="c-prop">grid-template-columns</span>: <span class="c-func">repeat</span>(
+    <span class="c-val">auto-fit</span>, 
+    <span class="c-func">minmax</span>(<span class="c-func">min</span>(<span class="c-val">100%</span>, <span class="c-val">280px</span>), <span class="c-val">1fr</span>)
+  );
+  
+  <span class="c-prop">gap</span>: <span class="c-val">1.5rem</span>;
+}
+
+<span class="c-comment">/* Diferença Crucial:
+   - auto-fit: estica as colunas existentes para ocupar 100% do espaço livre.
+   - auto-fill: preserva os tamanhos e reserva vagas vazias invisíveis. */</span></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Tipografia e Espaçamentos Fluidos com clamp() -->
+        <div class="demo-card" id="css-fluid-clamp">
+          <div class="demo-header">
+            <span class="demo-title">🌊 5. Tipografia e Espaçamento Fluido com clamp(min, ideal, max)</span>
+            <span class="badge badge-warning">Matemática CSS</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">O texto abaixo cresce suavemente conforme a largura da tela sem degraus bruscos:</p>
+              
+              <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <div style="font-size: clamp(1.2rem, 2.5vw + 0.5rem, 2.2rem); font-weight: 800; line-height: 1.2; color: #fff; margin-bottom: 0.5rem;">
+                  Título Dinâmico Fluido
+                </div>
+                <p style="font-size: clamp(0.85rem, 1vw + 0.5rem, 1.05rem); color: var(--text-muted);">
+                  Este parágrafo se auto-dimensiona entre <strong>0.85rem</strong> no smartphone e <strong>1.05rem</strong> em telas ultrawide, calculando <code>vw</code> sem quebrar.
+                </p>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* Sintaxe: clamp(VALOR_MÍNIMO, VALOR_IDEAL_FLUIDO, VALOR_MÁXIMO) */</span>
+
+<span class="c-comment">/* 1. Títulos que escalam suavemente */</span>
+<span class="c-sel">h1.hero-title</span> {
+  <span class="c-prop">font-size</span>: <span class="c-func">clamp</span>(<span class="c-val">1.75rem</span>, <span class="c-val">4vw + 1rem</span>, <span class="c-val">3.5rem</span>);
+  <span class="c-prop">line-height</span>: <span class="c-val">1.15</span>;
+}
+
+<span class="c-comment">/* 2. Padding e containers responsivos */</span>
+<span class="c-sel">.container</span> {
+  <span class="c-prop">padding</span>: <span class="c-func">clamp</span>(<span class="c-val">1rem</span>, <span class="c-val">5vw</span>, <span class="c-val">4rem</span>);
+  <span class="c-prop">gap</span>: <span class="c-func">clamp</span>(<span class="c-val">0.75rem</span>, <span class="c-val">2vw</span>, <span class="c-val">2rem</span>);
+}
+
+<span class="c-comment">/* Vantagem: Elimina de 5 a 10 media queries de font-size! */</span></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Efeitos Visuais: Glassmorphism, Aspect-Ratio & Truncamento -->
+        <div class="demo-card" id="css-modern-effects">
+          <div class="demo-header">
+            <span class="demo-title">✨ 6. Glassmorphism Real, Aspect-Ratio &amp; Truncamento de Texto</span>
+            <span class="badge badge-success">Visual Moderno</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <!-- Fundo com gradiente dinâmico para testar o blur do vidro -->
+              <div style="position: relative; padding: 1.5rem; background: linear-gradient(135deg, #4f46e5, #06b6d4, #ec4899); border-radius: 12px; overflow: hidden;">
+                <!-- Bolha decorativa de fundo -->
+                <div style="position: absolute; width: 80px; height: 80px; background: #fbbf24; border-radius: 50%; top: -10px; right: -10px; opacity: 0.8;"></div>
+                
+                <!-- Card Glassmorphism -->
+                <div style="position: relative; background: rgba(17, 24, 39, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 1rem; color: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.37);">
+                  <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.5rem;">
+                    <!-- Aspect-Ratio Thumbnail -->
+                    <div style="width: 54px; aspect-ratio: 1/1; background: linear-gradient(135deg, #06b6d4, #6366f1); border-radius: 6px; display: grid; place-items: center; font-size: 1.3rem;">
+                      🔮
+                    </div>
+                    <div>
+                      <h4 style="font-size: 0.95rem; font-weight: 700;">Card em Vidro Fosco</h4>
+                      <span style="font-size: 0.75rem; color: #a5b4fc;">backdrop-filter: blur(12px)</span>
+                    </div>
+                  </div>
+                  <!-- Texto truncado em 2 linhas com reticências -->
+                  <p style="font-size: 0.8rem; color: #e2e8f0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0;">
+                    Este parágrafo possui um texto bem longo para testar o truncamento automático nativo. As linhas excedentes são cortadas e substituídas por reticências sem precisar de JS.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* 1. Efeito Glassmorphism de Vidro Fosco */</span>
+<span class="c-sel">.glass-card</span> {
+  <span class="c-prop">background</span>: <span class="c-func">rgba</span>(<span class="c-val">17, 24, 39, 0.65</span>);
+  <span class="c-prop">backdrop-filter</span>: <span class="c-func">blur</span>(<span class="c-val">12px</span>);          <span class="c-comment">/* Desfoca o fundo atrás */</span>
+  <span class="c-prop">-webkit-backdrop-filter</span>: <span class="c-func">blur</span>(<span class="c-val">12px</span>);  <span class="c-comment">/* Suporte Apple Safari */</span>
+  <span class="c-prop">border</span>: <span class="c-val">1px solid rgba(255, 255, 255, 0.15)</span>;
+  <span class="c-prop">border-radius</span>: <span class="c-val">12px</span>;
+}
+
+<span class="c-comment">/* 2. Aspect Ratio (Vídeos 16:9 ou Banners sem distorção) */</span>
+<span class="c-sel">.video-banner</span> {
+  <span class="c-prop">width</span>: <span class="c-val">100%</span>;
+  <span class="c-prop">aspect-ratio</span>: <span class="c-val">16 / 9</span>; <span class="c-comment">/* Dispensa o antigo hack de padding-top! */</span>
+  <span class="c-prop">object-fit</span>: <span class="c-val">cover</span>;   <span class="c-comment">/* Não deforma a imagem */</span>
+}
+
+<span class="c-comment">/* 3. Truncamento com Reticências (...) Multi-Linha */</span>
+<span class="c-sel">.truncate-2-lines</span> {
+  <span class="c-prop">display</span>: <span class="c-val">-webkit-box</span>;
+  <span class="c-prop">-webkit-box-orient</span>: <span class="c-val">vertical</span>;
+  <span class="c-prop">-webkit-line-clamp</span>: <span class="c-val">2</span>; <span class="c-comment">/* Número de linhas antes de cortar */</span>
+  <span class="c-prop">overflow</span>: <span class="c-val">hidden</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Variáveis CSS & Modo Escuro Instantâneo -->
+        <div class="demo-card" id="css-custom-props">
+          <div class="demo-header">
+            <span class="demo-title">🌓 7. Variáveis CSS (Custom Properties) &amp; Dark Mode Instantâneo</span>
+            <span class="badge badge-info">Arquitetura de Temas</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Mini-demonstração de tema reativo via variáveis locais:</p>
+              
+              <div id="local-theme-box" style="--demo-bg: #111827; --demo-text: #f3f4f6; --demo-border: #374151; background: var(--demo-bg); color: var(--demo-text); border: 1px solid var(--demo-border); padding: 1rem; border-radius: 8px; transition: all 0.3s ease;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <strong style="font-size: 0.9rem;">Widget com Tokens CSS</strong>
+                  <button id="btn-toggle-demo-theme" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;" onclick="
+                    const b = document.getElementById('local-theme-box');
+                    const isDark = b.style.getPropertyValue('--demo-bg') === '#111827';
+                    b.style.setProperty('--demo-bg', isDark ? '#ffffff' : '#111827');
+                    b.style.setProperty('--demo-text', isDark ? '#0f172a' : '#f3f4f6');
+                    b.style.setProperty('--demo-border', isDark ? '#cbd5e1' : '#374151');
+                    this.innerText = isDark ? 'Mudar para Dark 🌙' : 'Mudar para Light ☀️';
+                  ">Mudar para Light ☀️</button>
+                </div>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin: 0;">
+                  Ao alterar apenas 3 variáveis, todo o card se transforma instantaneamente sem precisar regravar classes específicas em cada filho!
+                </p>
+              </div>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* 1. Declaração das variáveis no escopo raiz */</span>
+<span class="c-sel">:root</span> {
+  <span class="c-prop">--brand-primary</span>: <span class="c-val">#6366f1</span>;
+  <span class="c-prop">--radius</span>: <span class="c-val">10px</span>;
+
+  <span class="c-comment">/* Cores padrão (Tema Claro) */</span>
+  <span class="c-prop">--bg-surface</span>: <span class="c-val">#ffffff</span>;
+  <span class="c-prop">--text-main</span>: <span class="c-val">#0f172a</span>;
+  <span class="c-prop">--border-color</span>: <span class="c-val">#e2e8f0</span>;
+}
+
+<span class="c-comment">/* 2. Sobrescrevendo valores no Modo Escuro */</span>
+<span class="c-sel">html[data-theme="dark"]</span> {
+  <span class="c-prop">--bg-surface</span>: <span class="c-val">#111827</span>;
+  <span class="c-prop">--text-main</span>: <span class="c-val">#f3f4f6</span>;
+  <span class="c-prop">--border-color</span>: <span class="c-val">#374151</span>;
+}
+
+<span class="c-comment">/* 3. Seus componentes consomem as variáveis sem saber o tema */</span>
+<span class="c-sel">.card</span> {
+  <span class="c-prop">background</span>: <span class="c-func">var</span>(<span class="c-val">--bg-surface</span>);
+  <span class="c-prop">color</span>: <span class="c-func">var</span>(<span class="c-val">--text-main</span>);
+  <span class="c-prop">border</span>: <span class="c-val">1px solid</span> <span class="c-func">var</span>(<span class="c-val">--border-color</span>);
+  <span class="c-prop">border-radius</span>: <span class="c-func">var</span>(<span class="c-val">--radius</span>);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Seletores Modernos: :has(), :is() & :focus-visible -->
+        <div class="demo-card" id="css-modern-selectors">
+          <div class="demo-header">
+            <span class="demo-title">🛡️ 8. Seletores do Futuro: :has() (Seletor Pai), :is() &amp; :focus-visible</span>
+            <span class="badge badge-primary">CSS Selectors L4</span>
+          </div>
+          <div class="demo-grid">
+            <div class="demo-preview">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Marque a caixa abaixo. O container pai inteiro muda de estilo via <strong>CSS puro sem nenhum JS</strong> graças ao seletor <code>:has()</code>:</p>
+              
+              <style>
+                .interactive-has-card:has(input:checked) {
+                  background: rgba(6, 182, 212, 0.15) !important;
+                  border-color: #06b6d4 !important;
+                  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3) !important;
+                }
+              </style>
+
+              <label class="interactive-has-card" style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-surface-elevated); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); cursor: pointer; transition: all 0.25s ease;">
+                <input type="checkbox" style="width: 18px; height: 18px; accent-color: #06b6d4;">
+                <div>
+                  <strong style="font-size: 0.9rem; display: block;">Ativar Plano Pro</strong>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Estilizado via <code>.card:has(input:checked)</code></span>
+                </div>
+              </label>
+            </div>
+            <div class="demo-code-wrapper">
+              <button class="btn-copy" onclick="copyCode(this)">Copiar</button>
+              <pre class="code-block"><code><span class="c-comment">/* 1. :has() — O tão sonhado "Seletor Pai" do CSS */</span>
+<span class="c-sel">.card:has(input[type="checkbox"]:checked)</span> {
+  <span class="c-prop">background</span>: <span class="c-func">rgba</span>(<span class="c-val">6, 182, 212, 0.15</span>);
+  <span class="c-prop">border-color</span>: <span class="c-val">#06b6d4</span>;
+  <span class="c-prop">box-shadow</span>: <span class="c-val">0 0 15px rgba(6, 182, 212, 0.3)</span>;
+}
+
+<span class="c-comment">/* 2. :is() — Agrupamento limpo sem repetição de código */</span>
+<span class="c-sel">:is(header, main, footer) > .container</span> {
+  <span class="c-prop">max-width</span>: <span class="c-val">1200px</span>;
+  <span class="c-prop">margin</span>: <span class="c-val">0 auto</span>;
+}
+
+<span class="c-comment">/* 3. :focus-visible — Acessibilidade impecável */</span>
+<span class="c-sel">button:focus</span> {
+  <span class="c-prop">outline</span>: <span class="c-val">none</span>; <span class="c-comment">/* Remove anel feio no clique do mouse */</span>
+}
+<span class="c-sel">button:focus-visible</span> {
+  <span class="c-prop">outline</span>: <span class="c-val">2px solid #6366f1</span>; <span class="c-comment">/* Mostra foco apenas no TAB (teclado) */</span>
+  <span class="c-prop">outline-offset</span>: <span class="c-val">3px</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ======================================================================
+           SEÇÃO 15: FOLHA DE COLA & TAGS OBSOLETAS
+           ====================================================================== -->
+      <section id="cheat-sheet" class="tutorial-section">
+        <div class="section-header">
+          <h2 class="section-title">15. Folha de Cola: O que NUNCA Mais Usar (Tags Obsoletas)</h2>
+          <span class="section-tag">Cheat Sheet</span>
+        </div>
+        <p class="section-desc">
+          Se você aprendeu HTML nos anos 2000 ou início dos anos 2010, esqueça essas tags obsoletas e adote os equivalentes modernos em CSS:
+        </p>
+
+        <div class="table-responsive-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Tag Obsoleta (Evite!)</th>
+                <th scope="col">Por que foi abandonada?</th>
+                <th scope="col">Substituto Moderno Correto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&lt;center&gt;</code></td>
+                <td>Mistura apresentação visual com dados de conteúdo.</td>
+                <td>CSS <code>display: grid; place-items: center;</code> ou <code>margin: auto;</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;font&gt;</code></td>
+                <td>Impossibilita manutenção centralizada de temas.</td>
+                <td>CSS <code>font-family</code>, <code>font-size</code> e <code>color</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;marquee&gt;</code></td>
+                <td>Péssimo para acessibilidade e distrativo.</td>
+                <td>Animações CSS <code>@keyframes</code> com controle de pausa</td>
+              </tr>
+              <tr>
+                <td><code>&lt;frameset&gt; / &lt;frame&gt;</code></td>
+                <td>Quebrava o histórico do navegador e a acessibilidade.</td>
+                <td>Componentes modernos, SPAs ou <code>&lt;iframe&gt;</code> pontual</td>
+              </tr>
+              <tr>
+                <td><code>&lt;b&gt; e &lt;i&gt;</code> (sem contexto)</td>
+                <td>Não transmitem significado aos leitores de tela.</td>
+                <td>Use <code>&lt;strong&gt;</code> para importância e <code>&lt;em&gt;</code> para ênfase</td>
+              </tr>
+              <tr>
+                <td><code>&lt;table&gt;</code> para layout</td>
+                <td>Torna a página completamente inacessível e rígida em celulares.</td>
+                <td>CSS <code>display: flex</code> e <code>display: grid</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Componentes Flutuantes Globais -->
+  <!-- Toast de Notificação -->
+  <div class="toast-container">
+    <div id="live-toast" class="toast">
+      <span style="font-size: 1.25rem;">✅</span>
+      <span id="toast-message">Mensagem do sistema</span>
+    </div>
+  </div>
+
+  <!-- Botão Flutuante Voltar ao Topo -->
+  <button id="back-to-top" aria-label="Voltar ao topo da página" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    ↑
+  </button>
+
+  <!-- ==========================================================================
+       JAVASCRIPT VANILLA INTERATIVO (ZERO DEPENDÊNCIAS EXTERNAS)
+       ========================================================================== -->
+  <script>
+    // --- 1. Alternador de Tema Claro / Escuro com Memória ---
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const setupDarkCheckbox = document.getElementById('setup-dark-mode');
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('master_vault_theme', theme);
+      if (themeIcon) {
+        themeIcon.innerText = theme === 'dark' ? '🌙' : '☀️';
+      }
+      if (setupDarkCheckbox) {
+        setupDarkCheckbox.checked = (theme === 'dark');
+      }
+    }
+
+    // Carregar tema salvo ou respeitar preferência do sistema
+    const savedTheme = localStorage.getItem('master_vault_theme') || 
+      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    function toggleThemeManual(isDark) {
+      applyTheme(isDark ? 'dark' : 'light');
+    }
+
+    // --- 2. Barra de Progresso de Leitura & Botão Voltar ao Topo ---
+    const progressBar = document.getElementById('reading-progress');
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      
+      if (progressBar) progressBar.style.width = progress + '%';
+
+      if (backToTopBtn) {
+        if (scrollTop > 400) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      }
+    });
+
+    // --- 3. Menu Mobile Toggle ---
+    const btnToggleMenu = document.getElementById('btn-toggle-menu');
+    const sidebarNav = document.getElementById('sidebar-nav');
+
+    if (btnToggleMenu && sidebarNav) {
+      btnToggleMenu.addEventListener('click', () => {
+        sidebarNav.classList.toggle('mobile-open');
+      });
+
+      // Fechar menu mobile ao clicar em um link
+      sidebarNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          sidebarNav.classList.remove('mobile-open');
+        });
+      });
+    }
+
+    // --- 4. Busca / Filtro Rápido em Tempo Real ---
+    const searchInput = document.getElementById('quick-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const sections = document.querySelectorAll('.tutorial-section');
+        
+        sections.forEach(sec => {
+          const text = sec.innerText.toLowerCase();
+          if (query === '' || text.includes(query)) {
+            sec.style.display = '';
+          } else {
+            sec.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    // --- 5. Navegação das Abas do Setup Menu ---
+    function switchSettingsTab(event, tabId) {
+      const tabButtons = document.querySelectorAll('.settings-nav-btn');
+      const tabContents = document.querySelectorAll('.settings-tab-content');
+
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      const targetContent = document.getElementById(tabId);
+      if (targetContent) targetContent.classList.add('active');
+    }
+
+    // --- 6. Preview do Avatar ---
+    function previewAvatar(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const avatar = document.getElementById('user-avatar-display');
+          avatar.innerHTML = `<img src="${e.target.result}" alt="Avatar do Usuário" style="width: 100%; height: 100%; object-fit: cover;">`;
+          showToast('Avatar atualizado com sucesso!');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // --- 7. Seletor de Cor Interativo ---
+    const colorPicker = document.getElementById('inp-color');
+    const colorHexDisplay = document.getElementById('color-hex-display');
+    if (colorPicker && colorHexDisplay) {
+      colorPicker.addEventListener('input', (e) => {
+        colorHexDisplay.innerText = e.target.value;
+      });
+    }
+
+    // --- 8. Notificação Toast Global ---
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('live-toast');
+      const msgSpan = document.getElementById('toast-message');
+      if (!toast || !msgSpan) return;
+
+      msgSpan.innerText = message;
+      toast.classList.add('show');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    // --- 9. Modal de Exclusão (<dialog>) ---
+    function openDeleteDialog() {
+      const dialog = document.getElementById('delete-dialog');
+      if (dialog) dialog.showModal();
+    }
+
+    // --- 10. Botão de Copiar Código com Feedback Visual ---
+    function copyCode(btn) {
+      const codeBlock = btn.nextElementSibling;
+      if (!codeBlock) return;
+      
+      const codeText = codeBlock.innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = 'Copiado! ✓';
+        btn.style.backgroundColor = 'var(--color-success)';
+        btn.style.color = '#fff';
+
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.backgroundColor = '';
+          btn.style.color = '';
+        }, 2000);
+      }).catch(err => {
+        console.error('Falha ao copiar:', err);
+      });
+    }
+
+    // --- 10.1 Copiar Snippet Direto do Bate-Olho ---
+    function copySnippet(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Tag copiada: ' + text);
+      }).catch(err => {
+        console.error('Falha ao copiar snippet:', err);
+      });
+    }
+
+    // --- 11. Destacar Link Ativo no Sidebar com IntersectionObserver ---
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          const navLinks = document.querySelectorAll('.nav-list a');
+          navLinks.forEach(link => {
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.tutorial-section').forEach(section => {
+      sectionObserver.observe(section);
+    });
+  </script>
+</body>
+</html>
+

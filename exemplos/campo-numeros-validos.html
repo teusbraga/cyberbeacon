@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exemplo: Campo com Números</title>
+  <script>
+    // Função para garantir que só números sejam aceitos
+    function apenasNumeros(event) {
+      const input = event.target;
+      // Permite apenas números e evita que o zero seja removido
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+
+    // Função para manter o zero à esquerda
+    function manterZeroESsquerda(event) {
+      const input = event.target;
+      let value = input.value;
+      // Adiciona um zero à esquerda se não houver
+      if (value && value.length < 18) { // Aqui você pode ajustar o número de dígitos permitidos
+        input.value = value.padStart(5, '0'); // Ajusta o número de dígitos para 5 (mude conforme necessário)
+      }
+    }
+  </script>
+  <style>
+  /* Oculta a mensagem de erro inicialmente */
+  .error {
+    display: none;
+    color: red;
+    font-size: 0.9rem;
+  }
+
+  /* Quando o input estiver inválido */
+  input:invalid + .error {
+    display: inline;
+  }
+</style>
+</head>
+<body>
+	<form>
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required>
+  <span class="error">Por favor, insira um email válido.</span>
+
+  <br><br>
+
+  <label for="name">Nome:</label>
+  <input type="text" id="name" name="name" required>
+  <span class="error">Campo obrigatório!</span>
+
+  <br><br>
+
+  <button type="submit">Enviar</button>
+</form>
+
+
+
+  <form>
+    <label for="numero">Digite um número (zero à esquerda):</label>
+    <input type="text" id="numero" name="numero" maxlength="18" oninput="apenasNumeros(event)" onblur="manterZeroEsquerda(event)" required>
+    <small>Apenas números, com até 18 dígitos, e mantendo o zero à esquerda.</small>
+    <BR>
+    <input type="text" id="n" name="n" maxlength="18" oninput="apenasNumeros(event)" onblur="manterZeroEsquerda(event)" required>
+  </form>
+</body>
+</html>

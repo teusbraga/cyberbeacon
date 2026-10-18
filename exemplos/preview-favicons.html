@@ -1,0 +1,471 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview dos Favicons Vetoriais | Cyber Beacon</title>
+  <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="../imgs/favicon-beacon-neon.svg">
+
+  <style>
+    :root {
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fira Code', Consolas, monospace;
+      --bg: #0b0f19;
+      --surface: #111827;
+      --surface-elevated: #1f2937;
+      --border: #2d3748;
+      --primary: #6366f1;
+      --accent: #06b6d4;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      padding: 2.5rem 1.5rem;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    header {
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #06b6d4, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Simulador de Abas do Chrome */
+    .chrome-sim-section {
+      background: var(--surface);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+
+    .chrome-sim-header {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chrome-window {
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    /* Chrome Dark Mode Tab */
+    .chrome-dark-bar {
+      background: #202124;
+      padding: 8px 12px 0 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .chrome-dark-tab {
+      background: #292a2d;
+      color: #e8eaed;
+      padding: 8px 16px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      max-width: 240px;
+      border-top: 1px solid #3c4043;
+    }
+
+    /* Chrome Light Mode Tab */
+    .chrome-light-bar {
+      background: #dee1e6;
+      padding: 8px 12px 0 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .chrome-light-tab {
+      background: #ffffff;
+      color: #3c4043;
+      padding: 8px 16px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      max-width: 240px;
+      box-shadow: 0 -1px 2px rgba(0,0,0,0.06);
+    }
+
+    .tab-close {
+      margin-left: auto;
+      font-size: 12px;
+      opacity: 0.6;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+    }
+
+    /* Grid de Cards das 4 Propostas */
+    .proposals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .proposal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .proposal-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .card-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      align-self: flex-start;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Escalas de Tamanho */
+    .scales-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+      background: var(--surface-elevated);
+      padding: 1rem;
+      border-radius: 8px;
+      justify-content: space-around;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .scale-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scale-label {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    /* BotÃ£o de teste ao vivo */
+    .btn-test {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: filter 0.2s;
+    }
+
+    .btn-test:hover {
+      filter: brightness(1.15);
+    }
+
+    /* CÃ³digo para copiar */
+    .code-box {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #58a6ff;
+      overflow-x: auto;
+    }
+
+    .notification-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-weight: 600;
+      display: none;
+      animation: fadeIn 0.3s ease;
+      z-index: 999;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Propostas Vetoriais: Cyber Beacon Favicon</h1>
+      <p class="subtitle">
+        VersÃµes em SVG desenhadas especialmente para abas de navegadores (Chrome, Edge, Firefox), mantendo a identidade do Farol Cyber em resoluÃ§Ãµes de 16x16px atÃ© 128x128px.
+      </p>
+    </header>
+
+    <!-- SeÃ§Ã£o de SimulaÃ§Ã£o Real de Abas do Chrome -->
+    <section class="chrome-sim-section">
+      <div class="chrome-sim-header">
+        ðŸ–¥ï¸ SimulaÃ§Ã£o Visual: Como fica na aba do Chrome
+      </div>
+
+      <!-- Aba Modo Escuro (Chrome Dark Mode) -->
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Chrome Dark Mode (Fundo de aba #292a2d)</p>
+      <div class="chrome-window">
+        <div class="chrome-dark-bar">
+          <div class="chrome-dark-tab">
+            <img id="sim-dark-icon" src="../imgs/favicon-beacon-neon.svg" width="16" height="16" alt="favicon">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">HTML5 &amp; CSS3 Master Vault</span>
+            <div class="tab-close">âœ•</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aba Modo Claro (Chrome Light Mode) -->
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Chrome Light Mode (Fundo de aba #ffffff)</p>
+      <div class="chrome-window">
+        <div class="chrome-light-bar">
+          <div class="chrome-light-tab">
+            <img id="sim-light-icon" src="../imgs/favicon-beacon-neon.svg" width="16" height="16" alt="favicon">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">HTML5 &amp; CSS3 Master Vault</span>
+            <div class="tab-close">âœ•</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid das 4 VersÃµes -->
+    <section class="proposals-grid">
+
+      <!-- VariaÃ§Ã£o 1: Bold Micro-Favicon (RECOMENDADA) -->
+      <div class="proposal-card">
+        <span class="card-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">â­ Recomendada p/ 16px</span>
+        <h2 class="card-title">VariaÃ§Ã£o A: Micro-Favicon Bold</h2>
+        <p class="card-desc">
+          Geometria simplificada e traÃ§os reforÃ§ados para altÃ­ssima nitidez na aba. O feixe projeta o <code>&gt;_</code> perfeitamente visÃ­vel mesmo a 16px.
+        </p>
+        <div class="scales-row">
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-bold.svg" width="16" height="16" alt="16px">
+            <span class="scale-label">16px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-bold.svg" width="24" height="24" alt="24px">
+            <span class="scale-label">24px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-bold.svg" width="32" height="32" alt="32px">
+            <span class="scale-label">32px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-bold.svg" width="64" height="64" alt="64px">
+            <span class="scale-label">64px</span>
+          </div>
+        </div>
+        <button class="btn-test" onclick="applyFavicon('../imgs/favicon-beacon-bold.svg', 'VariaÃ§Ã£o A (Micro-Favicon Bold)')">
+          Testar agora nesta aba
+        </button>
+      </div>
+
+      <!-- VariaÃ§Ã£o 2: Badge Dark Squircle -->
+      <div class="proposal-card">
+        <span class="card-badge">Badge Squircle</span>
+        <h2 class="card-title">VariaÃ§Ã£o B: Squircle Slate</h2>
+        <p class="card-desc">
+          Farol completo com reflexos e feixe volumÃ©trico suave, encaixado em um squircle elegante de titÃ¢nio escuro.
+        </p>
+        <div class="scales-row">
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-badge.svg" width="16" height="16" alt="16px">
+            <span class="scale-label">16px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-badge.svg" width="24" height="24" alt="24px">
+            <span class="scale-label">24px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-badge.svg" width="32" height="32" alt="32px">
+            <span class="scale-label">32px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-badge.svg" width="64" height="64" alt="64px">
+            <span class="scale-label">64px</span>
+          </div>
+        </div>
+        <button class="btn-test" onclick="applyFavicon('../imgs/favicon-beacon-badge.svg', 'VariaÃ§Ã£o B (Squircle Slate)')">
+          Testar agora nesta aba
+        </button>
+      </div>
+
+      <!-- VariaÃ§Ã£o 3: Neon Cyberpunk (ESCOLHIDA OFICIAL) -->
+      <div class="proposal-card" style="border-color: var(--accent); box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);">
+        <span class="card-badge" style="background: rgba(6, 182, 212, 0.2); color: #22d3ee;">â­ Escolhida Oficial (Refinada)</span>
+        <h2 class="card-title">VariaÃ§Ã£o Neon Cyberpunk</h2>
+        <p class="card-desc">
+          Cursor <code>&gt;_</code> <strong>30% menor e colado Ã  direita</strong> na extremidade do feixe ciano. Utiliza o gradiente oficial do site (Ãndigo <code>#6366f1</code> e Ciano <code>#06b6d4</code>).
+        </p>
+        <div class="scales-row">
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-neon.svg" width="16" height="16" alt="16px">
+            <span class="scale-label">16px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-neon.svg" width="24" height="24" alt="24px">
+            <span class="scale-label">24px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-neon.svg" width="32" height="32" alt="32px">
+            <span class="scale-label">32px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-neon.svg" width="64" height="64" alt="64px">
+            <span class="scale-label">64px</span>
+          </div>
+        </div>
+        <button class="btn-test" onclick="applyFavicon('../imgs/favicon-beacon-neon.svg', 'VariaÃ§Ã£o Neon Cyberpunk (Refinada)')">
+          Testar agora nesta aba
+        </button>
+      </div>
+
+      <!-- VariaÃ§Ã£o 4: Flat Transparente -->
+      <div class="proposal-card">
+        <span class="card-badge">Fundo Transparente</span>
+        <h2 class="card-title">VariaÃ§Ã£o D: Flat Transparente</h2>
+        <p class="card-desc">
+          Silhueta aberta sem fundo com contorno de seguranÃ§a, integrando-se suavemente Ã  cor natural da aba do navegador.
+        </p>
+        <div class="scales-row">
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-flat.svg" width="16" height="16" alt="16px">
+            <span class="scale-label">16px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-flat.svg" width="24" height="24" alt="24px">
+            <span class="scale-label">24px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-flat.svg" width="32" height="32" alt="32px">
+            <span class="scale-label">32px</span>
+          </div>
+          <div class="scale-box">
+            <img src="../imgs/favicon-beacon-flat.svg" width="64" height="64" alt="64px">
+            <span class="scale-label">64px</span>
+          </div>
+        </div>
+        <button class="btn-test" onclick="applyFavicon('../imgs/favicon-beacon-flat.svg', 'VariaÃ§Ã£o D (Flat Transparente)')">
+          Testar agora nesta aba
+        </button>
+      </div>
+
+    </section>
+
+    <!-- CÃ³digo de ImplementaÃ§Ã£o -->
+    <section style="background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem;">
+      <h3 style="margin-bottom: 0.75rem; font-size: 1.1rem; color: #fff;">Como adicionar ao cabeÃ§alho do index.html:</h3>
+      <div class="code-box" id="code-snippet">
+&lt;!-- Favicon Vetorial Moderno (SVG suportado nativamente pelo Chrome, Edge, Safari e Firefox) --&gt;
+&lt;link rel="icon" type="image/svg+xml" href="../imgs/favicon-beacon-bold.svg"&gt;
+      </div>
+    </section>
+
+  </div>
+
+  <div id="toast" class="notification-toast">
+    Favicon atualizado na aba do navegador!
+  </div>
+
+  <script>
+    function applyFavicon(svgPath, name) {
+      // Atualiza o favicon real da pÃ¡gina
+      const favicon = document.getElementById('dynamic-favicon');
+      favicon.href = svgPath + '?t=' + Date.now();
+
+      // Atualiza os simuladores visuais
+      document.getElementById('sim-dark-icon').src = svgPath;
+      document.getElementById('sim-light-icon').src = svgPath;
+
+      // Atualiza o snippet
+      document.getElementById('code-snippet').textContent = 
+`<!-- Favicon Vetorial Moderno: ${name} -->\n<link rel="icon" type="image/svg+xml" href="${svgPath}">`;
+
+      // Exibe toast de aviso
+      const toast = document.getElementById('toast');
+      toast.textContent = `Aba atualizada para: ${name}`;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+  </script>
+</body>
+</html>
+

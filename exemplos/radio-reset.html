@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botão Limpar Radio</title>
+</head>
+<body>
+    <form>
+        <p>Escolha uma opção:</p>
+        <label>
+            <input type="radio" name="opcao" value="1"> Opção 1
+        </label>
+        <br>
+        <label>
+            <input type="radio" name="opcao" value="2"> Opção 2
+        </label>
+        <br>
+        <label>
+            <input type="radio" name="opcao" value="3"> Opção 3
+        </label>
+        <br><br>
+        <!-- Botão de reset -->
+        <button type="reset">Limpar Seleção</button>
+    </form>
+	<form>
+  <p>Escolha uma opção:</p>
+  <label>
+    <input type="radio" name="opcao" value="1"> Opção 1
+  </label>
+  <br>
+  <label>
+    <input type="radio" name="opcao" value="2"> Opção 2
+  </label>
+  <br>
+  <label>
+    <input type="radio" name="opcao" value="3"> Opção 3
+  </label>
+  <br><br>
+  <!-- Botão estilizado -->
+  <button type="reset" class="reset-btn" title="Limpar seleção">?</button>
+</form>
+
+<style>
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: #d3d3d3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .reset-btn:hover {
+    background-color: #a9a9a9;
+  }
+
+  .reset-btn:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .reset-btn:focus {
+    outline: none;
+  }
+</style>
+<form>
+  <p>Escolha uma opção:</p>
+  <label class="radio-container">
+    <input type="radio" name="opcao" value="1">
+    <span class="custom-radio"></span> Opção 1
+  </label>
+  <br>
+  <label class="radio-container">
+    <input type="radio" name="opcao" value="2">
+    <span class="custom-radio"></span> Opção 2
+  </label>
+  <br>
+  <label class="radio-container">
+    <input type="radio" name="opcao" value="3">
+    <span class="custom-radio"></span> Opção 3
+  </label>
+  <br><br>
+  <!-- Botão estilizado -->
+  <button type="reset" class="reset-btn" title="Limpar seleção">?</button>
+</form>
+
+<style>
+  /* Esconde o botão de rádio nativo */
+  input[type="radio"] {
+    display: none;
+  }
+
+  /* Contêiner do botão de rádio e o texto */
+  .radio-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+
+  /* Estilo do círculo personalizado */
+  .custom-radio {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d3d3d3;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    margin-right: 8px;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  /* Estado selecionado */
+  input[type="radio"]:checked + .custom-radio {
+    border-color: #007BFF;
+    background-color: #007BFF;
+  }
+
+  /* Pontinho interno para seleção */
+  input[type="radio"]:checked + .custom-radio::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Hover efeito */
+  .radio-container:hover .custom-radio {
+    border-color: #007BFF;
+  }
+
+  /* Botão estilizado */
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: #d3d3d3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .reset-btn:hover {
+    background-color: #a9a9a9;
+  }
+
+  .reset-btn:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .reset-btn:focus {
+    outline: none;
+  }
+</style>
+
+</body>
+</html>

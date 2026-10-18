@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação Interativa</title>
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none; /* Oculto por padrão */
+        }
+
+        .input-error {
+            border-color: red;
+        }
+
+        .success-message {
+            color: green;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <div class="error-message">Por favor, insira um email válido.</div>
+            <div class="success-message">Email válido!</div>
+        </div>
+
+        <div>
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+            <div class="error-message">Este campo é obrigatório.</div>
+            <div class="success-message">Nome válido!</div>
+        </div>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        // Função para validar um campo
+        function validateField(field) {
+            const value = field.value.trim();
+            const errorMessage = field.nextElementSibling;
+            const successMessage = errorMessage.nextElementSibling;
+
+            if (!value) {
+                // Campo vazio
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                field.classList.add('input-error');
+            } else if (field.type === 'email' && !field.validity.valid) {
+                // Email inválido
+                errorMessage.textContent = 'Por favor, insira um email válido.';
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                field.classList.add('input-error');
+            } else {
+                // Campo válido
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'block';
+                field.classList.remove('input-error');
+            }
+        }
+
+        // Selecionar todos os campos do formulário
+        const fields = document.querySelectorAll('input');
+
+        // Adicionar eventos a cada campo
+        fields.forEach(field => {
+            // Validar ao sair do campo
+            field.addEventListener('blur', () => validateField(field));
+
+            // Remover mensagem de erro enquanto o usuário digita
+            field.addEventListener('input', () => {
+                const errorMessage = field.nextElementSibling;
+                const successMessage = errorMessage.nextElementSibling;
+
+                if (field.value.trim()) {
+                    errorMessage.style.display = 'none';
+                    field.classList.remove('input-error');
+                } else {
+                    successMessage.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

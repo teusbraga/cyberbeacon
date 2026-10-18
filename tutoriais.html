@@ -1,0 +1,878 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="imgs/favicon-beacon-neon.svg">
+  <meta name="description" content="Vitrine Bate-Olho HTML: Mostruário visual instantâneo de tags e formulários nativos.">
+  <title>Bate-Olho HTML | Vitrine Visual Instantânea de Tags</title>
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & RESET
+       ========================================================================== */
+    :root {
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      --radius: 8px;
+      --transition: 0.15s ease;
+      --brand: #6366f1;
+      --brand-hover: #4f46e5;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #090d16;
+      --surface: #111827;
+      --surface-elevated: #1f2937;
+      --border: #283548;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --code-bg: #080c14;
+      --tag-color: #38bdf8;
+      --attr-color: #f43f5e;
+      --val-color: #a3e635;
+    }
+
+    html[data-theme="light"] {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #1e293b;
+      --tag-color: #0284c7;
+      --attr-color: #e11d48;
+      --val-color: #16a34a;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 1.5rem;
+      min-height: 100vh;
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       HEADER & BARRA DE CONTROLE SUPERIOR
+       ========================================================================== */
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      position: sticky;
+      top: 0;
+      background-color: var(--bg);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .title-area h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .title-area p {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .controls-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      background-color: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.45rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      width: 200px;
+      transition: width var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      width: 260px;
+    }
+
+    .btn {
+      background-color: var(--surface-elevated);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: var(--transition);
+    }
+
+    .btn:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .btn-primary {
+      background-color: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--brand-hover);
+      color: #fff;
+    }
+
+    /* Pílulas de Categoria */
+    .filter-pills {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pill {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.775rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .pill:hover, .pill.active {
+      background-color: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    /* ==========================================================================
+       SEÇÕES & GRADE DE TAGS (SHOWROOM BATE-OLHO)
+       ========================================================================== */
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+    }
+
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tag-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.65rem;
+      transition: transform var(--transition), border-color var(--transition);
+      position: relative;
+    }
+
+    .tag-card:hover {
+      border-color: var(--brand);
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tag-name {
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+      font-weight: bold;
+      color: var(--brand);
+      background-color: var(--surface-elevated);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    .card-preview {
+      background-color: var(--surface-elevated);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-preview > * {
+      max-width: 100%;
+    }
+
+    /* Estilização básica dos inputs dentro do card */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    input[type="month"],
+    input[type="week"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 0.825rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--brand);
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 34px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+    }
+
+    progress, meter {
+      width: 100%;
+      height: 18px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background-color: #10b981;
+      color: white;
+      padding: 0.6rem 1.1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE CONTROLE SUPERIOR -->
+  <header class="top-bar">
+    <div class="title-area">
+      <h1>⚡ Vitrine Bate-Olho HTML</h1>
+      <p>Esqueceu o nome ou como fica a tag? Bateu o olho, achou, copiou.</p>
+    </div>
+
+    <div class="controls-area">
+      <input type="search" id="search-filter" class="search-input" placeholder="Filtrar tag... (ex: date, range, color)" autocomplete="off">
+      <button class="btn" id="btn-theme" title="Alternar tema">🌙</button>
+      <a href="index.html" class="btn btn-primary">📖 Tutorial Completo</a>
+    </div>
+  </header>
+
+  <!-- FILTRO POR PÍLULAS -->
+  <nav class="filter-pills">
+    <button class="pill active" onclick="filterCategory('all')">Todos</button>
+    <button class="pill" onclick="filterCategory('text')">Texto & Senhas</button>
+    <button class="pill" onclick="filterCategory('numeric')">Números & Medidores</button>
+    <button class="pill" onclick="filterCategory('date')">Datas & Horas</button>
+    <button class="pill" onclick="filterCategory('choice')">Seleção & Escolha</button>
+    <button class="pill" onclick="filterCategory('interactive')">Interativos Nativos</button>
+  </nav>
+
+  <!-- ========================================================================
+       GRUPO 1: TEXTO & DADOS COMUNS
+       ======================================================================== -->
+  <section class="category-block" data-category="text">
+    <h2 class="section-title">📝 Texto, Senhas & Contatos</h2>
+    <div class="tag-grid">
+
+      <!-- Text -->
+      <div class="tag-card" data-tags="text nome texto string">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="text"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;text&quot; name=&quot;nome&quot; placeholder=&quot;Digite seu nome&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="text" placeholder="Digite seu nome">
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="tag-card" data-tags="password senha segredo">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="password"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;password&quot; name=&quot;senha&quot; placeholder=&quot;Sua senha&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="password" value="segredo123" placeholder="Sua senha">
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="tag-card" data-tags="email arroba mail correio">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="email"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;email&quot; name=&quot;email&quot; placeholder=&quot;nome@dominio.com&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="email" placeholder="nome@dominio.com">
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="tag-card" data-tags="search busca pesquisar lupa">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="search"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;search&quot; name=&quot;busca&quot; placeholder=&quot;Pesquisar...&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="search" placeholder="Pesquisar itens...">
+        </div>
+      </div>
+
+      <!-- Tel -->
+      <div class="tag-card" data-tags="tel telefone celular fone">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="tel"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;tel&quot; name=&quot;telefone&quot; placeholder=&quot;(11) 99999-9999&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="tel" placeholder="(11) 98765-4321">
+        </div>
+      </div>
+
+      <!-- URL -->
+      <div class="tag-card" data-tags="url site link web http">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="url"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;url&quot; name=&quot;site&quot; placeholder=&quot;https://site.com&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="url" placeholder="https://exemplo.com.br">
+        </div>
+      </div>
+
+      <!-- Textarea -->
+      <div class="tag-card" data-tags="textarea texto longo mensagem comentario">
+        <div class="card-top">
+          <span class="tag-name">&lt;textarea rows="2"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;textarea rows=&quot;3&quot; cols=&quot;30&quot; placeholder=&quot;Escreva aqui...&quot;&gt;&lt;/textarea&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <textarea rows="2" placeholder="Área para textos longos..."></textarea>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       GRUPO 2: NÚMEROS, CONTROLES & MEDIDORES
+       ======================================================================== -->
+  <section class="category-block" data-category="numeric">
+    <h2 class="section-title">🔢 Números, Sliders & Medidores</h2>
+    <div class="tag-grid">
+
+      <!-- Number -->
+      <div class="tag-card" data-tags="number numero valor idade min max">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="number"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;number&quot; min=&quot;1&quot; max=&quot;100&quot; value=&quot;10&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="number" min="1" max="100" value="10" style="width: 120px;">
+        </div>
+      </div>
+
+      <!-- Range (Slider) -->
+      <div class="tag-card" data-tags="range slider barra deslizante volume">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="range"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;range&quot; min=&quot;0&quot; max=&quot;100&quot; value=&quot;75&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="flex-direction: column; gap: 0.25rem;">
+          <input type="range" min="0" max="100" value="75" oninput="this.nextElementSibling.innerText = this.value + '%'">
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">75%</span>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="tag-card" data-tags="progress barra progresso upload download">
+        <div class="card-top">
+          <span class="tag-name">&lt;progress value="70" max="100"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;progress value=&quot;70&quot; max=&quot;100&quot;&gt;70%&lt;/progress&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="flex-direction: column; gap: 0.25rem;">
+          <progress value="70" max="100"></progress>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Progresso: 70%</span>
+        </div>
+      </div>
+
+      <!-- Meter -->
+      <div class="tag-card" data-tags="meter medidor indicador nivel bateria">
+        <div class="card-top">
+          <span class="tag-name">&lt;meter value="0.8"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;meter value=&quot;0.8&quot; min=&quot;0&quot; max=&quot;1&quot; low=&quot;0.3&quot; high=&quot;0.7&quot; optimum=&quot;0.9&quot;&gt;&lt;/meter&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="flex-direction: column; gap: 0.25rem;">
+          <meter value="0.8" min="0" max="1" low="0.3" high="0.7" optimum="0.9"></meter>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Medidor de Capacidade</span>
+        </div>
+      </div>
+
+      <!-- Output Interativo -->
+      <div class="tag-card" data-tags="output resultado calculo formula">
+        <div class="card-top">
+          <span class="tag-name">&lt;output&gt; (Cálculo Dinâmico)</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input id=&quot;a&quot; type=&quot;number&quot; value=&quot;2&quot;&gt; + &lt;input id=&quot;b&quot; type=&quot;number&quot; value=&quot;3&quot;&gt; = &lt;output for=&quot;a b&quot;&gt;5&lt;/output&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="gap: 0.4rem; font-size: 0.85rem;">
+          <input type="number" id="calc-a" value="5" style="width: 45px; text-align: center;" oninput="recalc()">
+          <span>+</span>
+          <input type="number" id="calc-b" value="7" style="width: 45px; text-align: center;" oninput="recalc()">
+          <span>=</span>
+          <output id="calc-res" style="font-weight: bold; color: var(--brand); font-size: 1rem;">12</output>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       GRUPO 3: DATAS & HORAS
+       ======================================================================== -->
+  <section class="category-block" data-category="date">
+    <h2 class="section-title">📅 Datas, Horas & Calendários</h2>
+    <div class="tag-grid">
+
+      <!-- Date -->
+      <div class="tag-card" data-tags="date data dia calendario nascimento">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="date"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;date&quot; name=&quot;data&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="date" value="2026-10-17">
+        </div>
+      </div>
+
+      <!-- Time -->
+      <div class="tag-card" data-tags="time hora horario relogio">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="time"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;time&quot; name=&quot;horario&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="time" value="14:30">
+        </div>
+      </div>
+
+      <!-- Datetime-local -->
+      <div class="tag-card" data-tags="datetime-local data hora evento agendamento">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="datetime-local"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;datetime-local&quot; name=&quot;evento&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="datetime-local" value="2026-10-17T18:00">
+        </div>
+      </div>
+
+      <!-- Month -->
+      <div class="tag-card" data-tags="month mes ano fatura cartao">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="month"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;month&quot; name=&quot;mes&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="month" value="2026-10">
+        </div>
+      </div>
+
+      <!-- Week -->
+      <div class="tag-card" data-tags="week semana sprint ano">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="week"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;week&quot; name=&quot;semana&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="week" value="2026-W42">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       GRUPO 4: SELEÇÃO, ESCOLHAS & ARQUIVOS
+       ======================================================================== -->
+  <section class="category-block" data-category="choice">
+    <h2 class="section-title">🔘 Seleção, Opções & Arquivos</h2>
+    <div class="tag-grid">
+
+      <!-- Color Picker -->
+      <div class="tag-card" data-tags="color cor seletor paleta rgb hex">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="color"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;color&quot; name=&quot;cor&quot; value=&quot;#6366f1&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="gap: 0.75rem;">
+          <input type="color" value="#6366f1" oninput="this.nextElementSibling.innerText = this.value">
+          <span style="font-family: var(--font-mono); font-size: 0.85rem;">#6366f1</span>
+        </div>
+      </div>
+
+      <!-- File -->
+      <div class="tag-card" data-tags="file arquivo upload foto pdf">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="file"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input type=&quot;file&quot; name=&quot;arquivo&quot; accept=&quot;image/*&quot;&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input type="file">
+        </div>
+      </div>
+
+      <!-- Checkbox -->
+      <div class="tag-card" data-tags="checkbox caixa selecao multipla marcar">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="checkbox"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;termo&quot;&gt; Aceito os termos&lt;/label&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="gap: 0.75rem;">
+          <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.825rem; cursor: pointer;">
+            <input type="checkbox" checked style="accent-color: var(--brand);"> Opção 1
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.825rem; cursor: pointer;">
+            <input type="checkbox" style="accent-color: var(--brand);"> Opção 2
+          </label>
+        </div>
+      </div>
+
+      <!-- Radio -->
+      <div class="tag-card" data-tags="radio botao opcao unica">
+        <div class="card-top">
+          <span class="tag-name">&lt;input type="radio"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;plano&quot; value=&quot;a&quot; checked&gt; A&lt;/label&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="gap: 0.75rem;">
+          <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.825rem; cursor: pointer;">
+            <input type="radio" name="demo-radio" checked style="accent-color: var(--brand);"> Sim
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.825rem; cursor: pointer;">
+            <input type="radio" name="demo-radio" style="accent-color: var(--brand);"> Não
+          </label>
+        </div>
+      </div>
+
+      <!-- Select com Optgroup -->
+      <div class="tag-card" data-tags="select optgroup dropdown lista escolher">
+        <div class="card-top">
+          <span class="tag-name">&lt;select&gt; &lt;optgroup&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;select&gt;\n  &lt;optgroup label=&quot;Frutas&quot;&gt;\n    &lt;option&gt;Maçã&lt;/option&gt;\n  &lt;/optgroup&gt;\n&lt;/select&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <select>
+            <optgroup label="Frutas">
+              <option>Maçã</option>
+              <option>Banana</option>
+            </optgroup>
+            <optgroup label="Legumes">
+              <option>Cenoura</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
+      <!-- Datalist (Autocomplete Nativo) -->
+      <div class="tag-card" data-tags="datalist autocomplete sugestao pesquisa list">
+        <div class="card-top">
+          <span class="tag-name">&lt;input list=""&gt; &lt;datalist&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;input list=&quot;cidades&quot;&gt;\n&lt;datalist id=&quot;cidades&quot;&gt;\n  &lt;option value=&quot;São Paulo&quot;&gt;\n&lt;/datalist&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <input list="lista-cidades" placeholder="Digite 'São' ou clique duas vezes">
+          <datalist id="lista-cidades">
+            <option value="São Paulo">
+            <option value="Rio de Janeiro">
+            <option value="Belo Horizonte">
+          </datalist>
+        </div>
+      </div>
+
+      <!-- Select Multiple -->
+      <div class="tag-card" data-tags="select multiple selecao multipla listbox">
+        <div class="card-top">
+          <span class="tag-name">&lt;select multiple size="3"&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;select multiple size=&quot;3&quot;&gt;\n  &lt;option&gt;Item 1&lt;/option&gt;\n  &lt;option&gt;Item 2&lt;/option&gt;\n&lt;/select&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <select multiple size="3" style="height: 60px;">
+            <option selected>Opção A (Ctrl+Click)</option>
+            <option>Opção B</option>
+            <option selected>Opção C</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       GRUPO 5: INTERATIVOS NATIVOS & ESTRUTURA
+       ======================================================================== -->
+  <section class="category-block" data-category="interactive">
+    <h2 class="section-title">✨ Elementos Interativos & Especiais Nativos</h2>
+    <div class="tag-grid">
+
+      <!-- Details e Summary -->
+      <div class="tag-card" data-tags="details summary accordion sanfona expansivel abrir fechar">
+        <div class="card-top">
+          <span class="tag-name">&lt;details&gt; &lt;summary&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;details&gt;\n  &lt;summary&gt;Clique para abrir&lt;/summary&gt;\n  &lt;p&gt;Conteúdo escondido aqui.&lt;/p&gt;\n&lt;/details&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="align-items: stretch; justify-content: flex-start;">
+          <details style="width: 100%; font-size: 0.825rem; cursor: pointer;">
+            <summary style="font-weight: 600; color: var(--brand);">Sanfona sem JavaScript!</summary>
+            <p style="margin-top: 0.35rem; color: var(--text-muted);">Aparece ao clicar sem nenhum script.</p>
+          </details>
+        </div>
+      </div>
+
+      <!-- Dialog Modal -->
+      <div class="tag-card" data-tags="dialog modal janela popup alert aviso">
+        <div class="card-top">
+          <span class="tag-name">&lt;dialog&gt; Modal Nativo</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;dialog id=&quot;d&quot;&gt;\n  &lt;p&gt;Olá!&lt;/p&gt;\n  &lt;form method=&quot;dialog&quot;&gt;&lt;button&gt;Fechar&lt;/button&gt;&lt;/form&gt;\n&lt;/dialog&gt;\n&lt;button onclick=&quot;d.showModal()&quot;&gt;Abrir&lt;/button&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <button class="btn btn-primary" onclick="document.getElementById('demo-quick-dialog').showModal()" style="font-size: 0.775rem;">
+            Testar showModal()
+          </button>
+        </div>
+      </div>
+
+      <!-- Kbd -->
+      <div class="tag-card" data-tags="kbd teclado tecla atalho ctrl shift">
+        <div class="card-top">
+          <span class="tag-name">&lt;kbd&gt; Tecla de Atalho</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;kbd&gt;Ctrl&lt;/kbd&gt; + &lt;kbd&gt;C&lt;/kbd&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="gap: 0.35rem; font-size: 0.85rem;">
+          <kbd style="background: var(--bg); border: 1px solid var(--border); border-bottom-width: 2px; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono);">Ctrl</kbd>
+          <span>+</span>
+          <kbd style="background: var(--bg); border: 1px solid var(--border); border-bottom-width: 2px; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono);">S</kbd>
+        </div>
+      </div>
+
+      <!-- Mark -->
+      <div class="tag-card" data-tags="mark marca texto grifador realce amarelo">
+        <div class="card-top">
+          <span class="tag-name">&lt;mark&gt; Texto Realçado</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;mark&gt;texto destacado&lt;/mark&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview">
+          <span>Este é um <mark style="background-color: #fef08a; color: #713f12; padding: 1px 4px; border-radius: 2px;">texto destacado</mark> nativo.</span>
+        </div>
+      </div>
+
+      <!-- Del e Ins -->
+      <div class="tag-card" data-tags="del ins riscado adicionado preco desconto">
+        <div class="card-top">
+          <span class="tag-name">&lt;del&gt; & &lt;ins&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;del&gt;R$ 100&lt;/del&gt; &lt;ins&gt;R$ 50&lt;/ins&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="gap: 0.5rem; font-size: 0.9rem;">
+          <del style="color: var(--text-muted);">De R$ 100</del>
+          <ins style="color: #10b981; font-weight: bold; text-decoration: none;">Por R$ 49</ins>
+        </div>
+      </div>
+
+      <!-- Fieldset e Legend -->
+      <div class="tag-card" data-tags="fieldset legend borda agrupamento formulario">
+        <div class="card-top">
+          <span class="tag-name">&lt;fieldset&gt; &lt;legend&gt;</span>
+          <button class="copy-btn" onclick="copySnippet('&lt;fieldset&gt;\n  &lt;legend&gt;Dados&lt;/legend&gt;\n  &lt;input type=&quot;text&quot;&gt;\n&lt;/fieldset&gt;')">Copiar</button>
+        </div>
+        <div class="card-preview" style="width: 100%;">
+          <fieldset style="border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; width: 100%;">
+            <legend style="padding: 0 4px; font-size: 0.75rem; color: var(--brand); font-weight: bold;">Grupo</legend>
+            <input type="text" placeholder="Campo agrupado..." style="font-size: 0.75rem; padding: 0.25rem;">
+          </fieldset>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MODAL DE DEMONSTRAÇÃO DO BATE-OLHO -->
+  <dialog id="demo-quick-dialog" style="margin: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); padding: 1.5rem; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+    <h3 style="margin-bottom: 0.5rem;">🎉 Modal Nativo &lt;dialog&gt;</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Você abriu um modal usando a API nativa sem nenhuma biblioteca. Pressione ESC para fechar!
+    </p>
+    <form method="dialog" style="text-align: right;">
+      <button class="btn btn-primary">Fechar (ESC)</button>
+    </form>
+  </dialog>
+
+  <!-- TOAST DE FEEDBACK -->
+  <div id="toast" class="toast">Tag copiada com sucesso! ✓</div>
+
+  <!-- SCRIPT RÁPIDO DO BATE-OLHO -->
+  <script>
+    // --- Cálculo de Output ---
+    function recalc() {
+      const a = parseFloat(document.getElementById('calc-a').value) || 0;
+      const b = parseFloat(document.getElementById('calc-b').value) || 0;
+      document.getElementById('calc-res').innerText = a + b;
+    }
+
+    // --- Copiar Snippet com 1 Clique ---
+    function copySnippet(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Tag copiada para a área de transferência! ✓');
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // --- Filtro por Texto em Tempo Real ---
+    const searchFilter = document.getElementById('search-filter');
+    searchFilter.addEventListener('input', (e) => {
+      const val = e.target.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.tag-card');
+      const blocks = document.querySelectorAll('.category-block');
+
+      cards.forEach(card => {
+        const text = (card.getAttribute('data-tags') + ' ' + card.innerText).toLowerCase();
+        if (val === '' || text.includes(val)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Esconder blocos vazios
+      blocks.forEach(block => {
+        const visibleCards = block.querySelectorAll('.tag-card[style*="display: flex"], .tag-card:not([style*="display: none"])');
+        block.style.display = (val !== '' && visibleCards.length === 0) ? 'none' : 'block';
+      });
+    });
+
+    // --- Filtro por Categoria (Pílulas) ---
+    function filterCategory(cat) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const blocks = document.querySelectorAll('.category-block');
+      blocks.forEach(b => {
+        if (cat === 'all' || b.getAttribute('data-category') === cat) {
+          b.style.display = 'block';
+        } else {
+          b.style.display = 'none';
+        }
+      });
+    }
+
+    // --- Alternador de Tema Escuro / Claro ---
+    const btnTheme = document.getElementById('btn-theme');
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('bate_olho_theme', theme);
+      btnTheme.innerText = theme === 'dark' ? '🌙' : '☀️';
+    }
+    const savedTheme = localStorage.getItem('bate_olho_theme') || 'dark';
+    applyTheme(savedTheme);
+
+    btnTheme.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      applyTheme(cur === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD MVC com Portabilidade JSON</title>
+  <style>
+  /* Estilos básicos para o protótipo */
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  margin: 0;
+  padding: 20px;
+}
+
+#app {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #2196F3;
+  color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1976D2;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+.actions button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+}
+
+#json-ops {
+  margin-top: 30px;
+  text-align: center;
+}
+
+#json-ops textarea {
+  width: 90%;
+  margin-top: 10px;
+  padding: 10px;
+  resize: vertical;
+}
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Cadastro de Usuários</h1>
+    <form id="user-form">
+      <!-- Campo oculto para edição -->
+      <input type="hidden" id="user-id">
+      <div class="form-group">
+        <label for="user-name">Nome:</label>
+        <input type="text" id="user-name" placeholder="Digite o nome" required>
+      </div>
+      <div class="form-group">
+        <label for="user-email">Email:</label>
+        <input type="email" id="user-email" placeholder="Digite o email" required>
+      </div>
+      <button type="submit">Salvar Usuário</button>
+    </form>
+    
+    <h2>Lista de Usuários</h2>
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Registros serão inseridos dinamicamente -->
+      </tbody>
+    </table>
+
+    <h2>Portabilidade de Dados (JSON)</h2>
+    <div id="json-ops">
+      <button id="export-json">Exportar JSON</button>
+      <button id="import-json">Importar JSON</button>
+      <textarea id="json-data" placeholder="Cole o JSON aqui para importar" rows="5"></textarea>
+    </div>
+  </div>
+  <script>
+	
+  // Camada de Persistência/Portabilidade – responsável por ler, salvar, exportar e importar os dados via JSON.
+class PersistenceAdapter {
+  constructor(storageKey = 'users') {
+    this.storageKey = storageKey;
+    // Inicializa o localStorage com um array vazio, se ainda não existir
+    if (!localStorage.getItem(this.storageKey)) {
+      this.setData([]);
+    }
+  }
+
+  // Retorna os dados armazenados (array de usuários)
+  getData() {
+    try {
+      return JSON.parse(localStorage.getItem(this.storageKey)) || [];
+    } catch (e) {
+      console.error("Erro ao ler os dados:", e);
+      return [];
+    }
+  }
+
+  // Salva o array de usuários no localStorage
+  setData(data) {
+    localStorage.setItem(this.storageKey, JSON.stringify(data));
+  }
+
+  // Exporta os dados como string JSON
+  exportJSON() {
+    return JSON.stringify(this.getData());
+  }
+
+  // Importa dados a partir de uma string JSON ou objeto já desserializado
+  importJSON(jsonData) {
+    try {
+      const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+      if (Array.isArray(data)) {
+        this.setData(data);
+        return true;
+      } else {
+        throw new Error("Os dados importados não são um array.");
+      }
+    } catch (e) {
+      console.error("Erro ao importar JSON:", e);
+      return false;
+    }
+  }
+}
+
+// Modelo – Lida com a lógica de negócio relacionada aos usuários.
+// Recebe uma instância do adapter de persistência para operar com os dados.
+class UserModel {
+  constructor(adapter) {
+    this.adapter = adapter;
+  }
+
+  // Retorna a lista de usuários
+  getUsers() {
+    return this.adapter.getData();
+  }
+
+  // Gera um ID único (aqui, usando o timestamp)
+  generateId() {
+    return Date.now().toString();
+  }
+
+  // Cria um novo usuário
+  create(user) {
+    const users = this.getUsers();
+    user.id = this.generateId();
+    users.push(user);
+    this.adapter.setData(users);
+    return user;
+  }
+
+  // Atualiza um usuário existente
+  update(updatedUser) {
+    const users = this.getUsers();
+    const index = users.findIndex(user => user.id === updatedUser.id);
+    if (index !== -1) {
+      users[index] = updatedUser;
+      this.adapter.setData(users);
+      return updatedUser;
+    }
+    return null;
+  }
+
+  // Remove um usuário pelo ID
+  delete(id) {
+    let users = this.getUsers();
+    users = users.filter(user => user.id !== id);
+    this.adapter.setData(users);
+  }
+
+  // Busca um usuário pelo ID
+  getById(id) {
+    const users = this.getUsers();
+    return users.find(user => user.id === id);
+  }
+
+  // Métodos de portabilidade
+  exportData() {
+    return this.adapter.exportJSON();
+  }
+
+  importData(jsonData) {
+    return this.adapter.importJSON(jsonData);
+  }
+}
+
+// Visão – Responsável por manipular o DOM e exibir os dados
+class UserView {
+  constructor() {
+    this.app = document.getElementById('app');
+    this.form = document.getElementById('user-form');
+    this.inputId = document.getElementById('user-id');
+    this.inputName = document.getElementById('user-name');
+    this.inputEmail = document.getElementById('user-email');
+    this.tableBody = document.querySelector('#user-table tbody');
+  }
+
+  // Limpa os campos do formulário
+  clearForm() {
+    this.inputId.value = '';
+    this.inputName.value = '';
+    this.inputEmail.value = '';
+  }
+
+  // Preenche o formulário com os dados do usuário (para edição)
+  fillForm(user) {
+    this.inputId.value = user.id;
+    this.inputName.value = user.name;
+    this.inputEmail.value = user.email;
+  }
+
+  // Renderiza a lista de usuários na tabela
+  renderUsers(users) {
+    this.tableBody.innerHTML = '';
+    users.forEach(user => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td class="actions">
+          <button data-id="${user.id}" class="edit-btn">Editar</button>
+          <button data-id="${user.id}" class="delete-btn">Excluir</button>
+        </td>
+      `;
+      this.tableBody.appendChild(row);
+    });
+  }
+}
+
+// Controlador – Intermedia as interações entre Model e View
+class UserController {
+  constructor(model, view) {
+    this.model = model;
+    this.view = view;
+
+    // Renderiza a lista inicial de usuários
+    this.view.renderUsers(this.model.getUsers());
+
+    // Vincula os eventos do formulário e da tabela
+    this.view.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+    this.view.tableBody.addEventListener('click', (e) => this.handleTableClick(e));
+    
+    // Eventos para exportação e importação de dados JSON
+    document.getElementById('export-json').addEventListener('click', () => this.handleExportJSON());
+    document.getElementById('import-json').addEventListener('click', () => this.handleImportJSON());
+  }
+
+  // Trata o envio do formulário para criação ou atualização
+  handleFormSubmit(e) {
+    e.preventDefault();
+    const id = this.view.inputId.value;
+    const name = this.view.inputName.value.trim();
+    const email = this.view.inputEmail.value.trim();
+
+    if (name === '' || email === '') {
+      alert('Nome e Email não podem ser vazios.');
+      return;
+    }
+
+    if (id === '') {
+      // Cria um novo usuário
+      this.model.create({ name, email });
+    } else {
+      // Atualiza o usuário existente
+      this.model.update({ id, name, email });
+    }
+    this.view.clearForm();
+    this.view.renderUsers(this.model.getUsers());
+  }
+
+  // Trata cliques nos botões de edição e exclusão da tabela
+  handleTableClick(e) {
+    const target = e.target;
+    const id = target.getAttribute('data-id');
+    if (target.classList.contains('edit-btn')) {
+      const user = this.model.getById(id);
+      if (user) {
+        this.view.fillForm(user);
+      }
+    } else if (target.classList.contains('delete-btn')) {
+      if (confirm('Tem certeza que deseja excluir este usuário?')) {
+        this.model.delete(id);
+        this.view.renderUsers(this.model.getUsers());
+      }
+    }
+  }
+
+  // Exporta os dados atuais e exibe o JSON na área de texto
+  handleExportJSON() {
+    const jsonData = this.model.exportData();
+    const textarea = document.getElementById('json-data');
+    textarea.value = jsonData;
+    alert("Dados exportados para JSON!");
+  }
+
+  // Importa os dados a partir do conteúdo da área de texto
+  handleImportJSON() {
+    const textarea = document.getElementById('json-data');
+    const jsonData = textarea.value;
+    if (jsonData.trim() === '') {
+      alert("Insira os dados JSON para importar.");
+      return;
+    }
+    const success = this.model.importData(jsonData);
+    if (success) {
+      alert("Dados importados com sucesso!");
+      this.view.renderUsers(this.model.getUsers());
+    } else {
+      alert("Falha na importação dos dados. Verifique o formato do JSON.");
+    }
+  }
+}
+
+// Inicialização dos componentes do MVC após o carregamento do DOM
+document.addEventListener('DOMContentLoaded', () => {
+  // Instancia o adapter de persistência – atualmente usando localStorage
+  const adapter = new PersistenceAdapter('users');
+  const model = new UserModel(adapter);
+  const view = new UserView();
+  new UserController(model, view);
+});
+
+  </script>
+</body>
+</html>

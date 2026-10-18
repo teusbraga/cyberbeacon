@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticação + GitHub API</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h2>Autenticação com Google para Atualizar GitHub</h2>
+    
+    <!-- Botão de login do Google -->
+    <div id="g_id_onload"
+         data-client_id="SEU_CLIENT_ID_AQUI"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+
+    <p id="user-info"></p>
+
+    <!-- Formulário para alteração no repositório -->
+    <form id="github-form" style="display: none;">
+        <label>Mensagem de Commit:</label>
+        <input type="text" id="commit-message" required>
+        <br><br>
+        <label>Novo Conteúdo:</label>
+        <textarea id="file-content" rows="4" required></textarea>
+        <br><br>
+        <button type="submit">Atualizar GitHub</button>
+    </form>
+
+    <script>
+        const AUTHORIZED_EMAILS = ["mts.almeida7@gmail.com"]; // Apenas usuários autorizados podem comitar
+        const GITHUB_USERNAME = "seu-usuario"; // Seu usuário do GitHub
+        const REPO_NAME = "seu-repositorio"; // Nome do repositório
+        const FILE_PATH = "index.html"; // Arquivo a ser alterado
+        const BRANCH = "main"; // Branch principal
+        const GITHUB_TOKEN = "SEU_PERSONAL_ACCESS_TOKEN"; // **Nunca exponha em produção!**
+
+        function handleCredentialResponse(response) {
+            const idToken = response.credential;
+            fetch("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + idToken)
+                .then(res => res.json())
+                .then(user => {
+                    if (AUTHORIZED_EMAILS.includes(user.email)) {
+                        document.getElementById("user-info").innerText = `Bem-vindo, ${user.email}`;
+                        document.getElementById("github-form").style.display = "block";
+                    } else {
+                        alert("Usuário não autorizado.");
+                    }
+                })
+                .catch(err => console.error("Erro na autenticação:", err));
+        }
+
+        document.getElementById("github-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const commitMessage = document.getElementById("commit-message").value;
+            const newContent = btoa(document.getElementById("file-content").value); // Codificar para Base64
+
+            // Obter o SHA do arquivo atual para poder sobrescrever
+            const fileUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`;
+            const headers = {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Accept": "application/vnd.github.v3+json",
+                "Content-Type": "application/json"
+            };
+
+            try {
+                const fileResponse = await fetch(fileUrl, { headers });
+                const fileData = await fileResponse.json();
+                const sha = fileData.sha; // Necessário para atualizar o arquivo
+
+                const body = {
+                    message: commitMessage,
+                    content: newContent,
+                    sha: sha,
+                    branch: BRANCH
+                };
+
+                const commitResponse = await fetch(fileUrl, {
+                    method: "PUT",
+                    headers,
+                    body: JSON.stringify(body)
+                });
+
+                if (commitResponse.ok) {
+                    alert("Arquivo atualizado com sucesso!");
+                } else {
+                    alert("Erro ao atualizar o arquivo.");
+                }
+            } catch (error) {
+                console.error("Erro na requisição:", error);
+            }
+        });
+    </script>
+</body>
+</html>

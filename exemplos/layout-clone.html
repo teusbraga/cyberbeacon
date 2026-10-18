@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone Layout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f8fb;
+            color: #333;
+        }
+
+        header {
+            background-color: #eaf9f6;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00a775;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .contact-section {
+            max-width: 1100px;
+            margin: 50px auto;
+            display: flex;
+            gap: 30px;
+            padding: 0 15px;
+        }
+
+        .contact-info, .contact-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+
+        .contact-info h3 {
+            margin-bottom: 10px;
+            color: #00a775;
+        }
+
+        .contact-info p {
+            margin: 5px 0;
+        }
+
+        .contact-info a {
+            text-decoration: none;
+            color: #00a775;
+        }
+
+        .contact-form h3 {
+            margin-bottom: 10px;
+        }
+
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .contact-form button {
+            background-color: #00a775;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .contact-form button:hover {
+            background-color: #007e59;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #eaf9f6;
+            margin-top: 50px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">uprankly</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Success Stories</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="contact-section">
+        <div class="contact-info">
+            <h3>Contact Information</h3>
+            <p>We’ll create high-quality linkable content and build at least 40 high-authority links.</p>
+            <p><strong>Phone:</strong> +8801777786868, +98887783686</p>
+            <p><strong>Email:</strong> <a href="mailto:support@uprankly.com">support@uprankly.com</a></p>
+            <p><strong>Location:</strong> New York, USA</p>
+        </div>
+        <div class="contact-form">
+            <h3>Get In Touch</h3>
+            <form>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <input type="text" placeholder="Your Subject" required>
+                <textarea rows="5" placeholder="Write here your message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>Terms | Privacy | Cookies</p>
+    </footer>
+</body>
+</html>

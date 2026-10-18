@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Dados com LocalStorage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    input {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerenciar Dados com LocalStorage</h1>
+
+  <label for="textInput">Texto:</label>
+  <input type="text" id="textInput" placeholder="Digite um texto" required>
+  <br>
+  <label for="vectorInput1">Número 1 (0 ou 1):</label>
+  <input type="number" id="vectorInput1" min="0" max="1" required>
+  <label for="vectorInput2">Número 2 (0 ou 1):</label>
+  <input type="number" id="vectorInput2" min="0" max="1" required>
+  <br>
+  <button onclick="saveEntry()">Salvar Entrada</button>
+  <button onclick="exportToJson()">Exportar para JSON</button>
+  <br><br>
+
+  <!-- Botão e input para carregar o arquivo JSON -->
+  <input type="file" id="jsonUpload" accept=".json">
+  <button onclick="uploadJson()">Carregar Dados JSON</button>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Texto</th>
+        <th>Vetor</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    // Define o namespace exclusivo para os dados desta página
+    const STORAGE_NAMESPACE = 'myAppNamespace';
+
+    // Função para obter todos os dados do namespace
+    function getNamespaceData() {
+      const storedData = localStorage.getItem(STORAGE_NAMESPACE);
+      return storedData ? JSON.parse(storedData) : {}; // Retorna um objeto vazio se não houver dados
+    }
+
+    // Função para salvar todos os dados no namespace
+    function setNamespaceData(data) {
+      localStorage.setItem(STORAGE_NAMESPACE, JSON.stringify(data));
+    }
+
+    // Função para adicionar uma nova entrada ao namespace
+    function saveEntry() {
+      const textInput = document.getElementById('textInput').value.trim();
+      const vectorInput1 = parseInt(document.getElementById('vectorInput1').value);
+      const vectorInput2 = parseInt(document.getElementById('vectorInput2').value);
+
+      // Validação simples dos campos
+      if (!textInput || isNaN(vectorInput1) || isNaN(vectorInput2)) {
+        alert('Preencha todos os campos corretamente!');
+        return;
+      }
+
+      // Obtém os dados atuais do namespace
+      const data = getNamespaceData();
+
+      // Adiciona ou sobrescreve a entrada
+      data[textInput] = { texto: textInput, vetor: [vectorInput1, vectorInput2] };
+
+      // Salva os dados de volta no namespace
+      setNamespaceData(data);
+      alert('Entrada salva com sucesso!');
+
+      // Atualiza a tabela
+      updateTable();
+    }
+
+    // Função para atualizar a tabela exibindo apenas os dados do namespace
+    function updateTable() {
+      const tableBody = document.getElementById('dataTable').querySelector('tbody');
+      tableBody.innerHTML = ''; // Limpa a tabela
+
+      // Obtém os dados do namespace
+      const data = getNamespaceData();
+
+      // Itera sobre as entradas e adiciona à tabela
+      for (const key in data) {
+        const entry = data[key];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.texto}</td>
+          <td>[${entry.vetor.join(', ')}]</td>
+        `;
+        tableBody.appendChild(row);
+      }
+    }
+
+    // Função para exportar apenas os dados do namespace para um arquivo JSON
+    function exportToJson() {
+      const data = getNamespaceData();
+
+      // Cria um blob de arquivo JSON
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      // Cria um link de download e aciona o download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dados.json';
+      a.click();
+
+      // Libera a URL após o download
+      URL.revokeObjectURL(url);
+    }
+
+    // Função para carregar dados de um arquivo JSON e sobrescrever o namespace
+    function uploadJson() {
+      const fileInput = document.getElementById('jsonUpload');
+      const file = fileInput.files[0];
+
+      // Verifica se um arquivo foi selecionado
+      if (!file) {
+        alert('Por favor, selecione um arquivo JSON!');
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        try {
+          // Carrega os dados do arquivo JSON
+          const uploadedData = JSON.parse(event.target.result);
+
+          // Valida se os dados importados estão no formato esperado
+          if (typeof uploadedData !== 'object' || Array.isArray(uploadedData)) {
+            throw new Error('Formato inválido');
+          }
+
+          // Sobrescreve os dados no namespace
+          setNamespaceData(uploadedData);
+          alert('Dados carregados com sucesso!');
+          updateTable(); // Atualiza a tabela após carregar os dados
+        } catch (e) {
+          alert('Erro ao carregar o arquivo JSON!');
+          console.error(e);
+        }
+      };
+
+      // Lê o conteúdo do arquivo JSON
+      reader.readAsText(file);
+    }
+
+    // Atualiza a tabela ao carregar a página
+    window.onload = updateTable;
+  </script>
+</body>
+</html>

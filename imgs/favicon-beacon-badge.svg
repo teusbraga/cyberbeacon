@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <!-- Gradiente do fundo squircle -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#161f30"/>
+      <stop offset="100%" stop-color="#0a0e17"/>
+    </linearGradient>
+
+    <!-- Gradiente da torre de titânio -->
+    <linearGradient id="towerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="50%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+
+    <!-- Gradiente do feixe de luz -->
+    <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.85"/>
+      <stop offset="35%" stop-color="#06b6d4" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.08"/>
+    </linearGradient>
+
+    <!-- Brilho do feixe -->
+    <linearGradient id="promptGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Fundo Squircle Dark com borda sutil -->
+  <rect x="1.5" y="1.5" width="61" height="61" rx="14" fill="url(#bgGrad)" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Feixe de luz volumétrico -->
+  <polygon points="23,21 59,12 59,38 23,26" fill="url(#beamGrad)" />
+  <line x1="23" y1="21" x2="59" y2="12" stroke="#00f0ff" stroke-width="0.75" stroke-opacity="0.6"/>
+  <line x1="23" y1="26" x2="59" y2="38" stroke="#06b6d4" stroke-width="0.75" stroke-opacity="0.3"/>
+
+  <!-- Terminal Prompt >_ projetado na luz com filtro glow -->
+  <g filter="url(#glow)">
+    <!-- Chevron > -->
+    <path d="M 33,19 L 40,25 L 33,31" fill="none" stroke="url(#promptGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Cursor _ -->
+    <line x1="44" y1="31" x2="53" y2="31" stroke="url(#promptGrad)" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Farol Cyber / Geometria Minimalista -->
+  <!-- Base sólida -->
+  <polygon points="5,49 31,49 33,54 3,54" fill="#334155"/>
+  <path d="M 15,54 L 15,48 A 3,3 0 0 1 21,48 L 21,54 Z" fill="#0f172a"/>
+
+  <!-- Corpo da Torre -->
+  <polygon points="10,29 26,29 29,49 7,49" fill="url(#towerGrad)"/>
+
+  <!-- Faixa de corte Cyber Amber (luz neon amarela diagonal) -->
+  <polygon points="7.8,43 28.2,35.5 28.6,37.5 8.2,45" fill="#f59e0b" filter="url(#glow)"/>
+
+  <!-- Plataforma / Guarda-corpo -->
+  <polygon points="8,27 28,27 27,29 9,29" fill="#cbd5e1"/>
+
+  <!-- Câmara da Lanterna (Vidro) -->
+  <rect x="11" y="19" width="14" height="8" rx="1" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <!-- Lâmpada emissora de luz azul ciano -->
+  <circle cx="18" cy="23" r="3.5" fill="#00f0ff" filter="url(#glow)"/>
+
+  <!-- Cúpula / Telhado cônico -->
+  <polygon points="18,10 27,19 9,19" fill="#cbd5e1"/>
+  <!-- Ponta da torre -->
+  <circle cx="18" cy="9" r="1.5" fill="#00f0ff"/>
+</svg>

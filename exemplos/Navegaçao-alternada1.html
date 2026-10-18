@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Exemplo de SPA otimizado para SEO com seções visíveis uma por vez.">
+    <title>Navegação Alternada</title>
+    <!--<style>
+        /* Todas as seções estão visíveis para motores de busca */
+        .section {
+            position: absolute; /* Evita quebra de layout enquanto oculta */
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0; /* Torna invisível */
+            pointer-events: none; /* Impede interação */
+            
+        }
+        .active {
+            position: relative; /* Garante o layout correto */
+            opacity: 1;
+            pointer-events: auto; /* Permite interação */
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: blue;
+            cursor: pointer;
+        }
+    </style>
+	<!-->
+</head>
+<body>
+    <!-- Navegação -->
+    <nav>
+        <a href="#home" class="nav-link" data-target="home">Home</a>
+        <a href="#about" class="nav-link" data-target="about">About</a>
+        <a href="#contact" class="nav-link" data-target="contact">Contact</a>
+    </nav>
+
+    <!-- Seções: Cada uma com conteúdo único -->
+    <section id="home" class="section active">
+        <h1>Home</h1>
+        <p>Bem-vindo à página inicial. Aqui você encontra informações importantes.</p>
+    </section>
+
+    <section id="about" class="section">
+        <h1>About Us</h1>
+        <p>Saiba mais sobre nossa empresa e valores.</p>
+    </section>
+
+    <section id="contact" class="section">
+        <h1>Contact</h1>
+        <p>Entre em contato conosco para mais informações.</p>
+    </section>
+
+    <script>
+        // Seleciona todos os links de navegação e as seções
+        const links = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+
+        // Função para mudar a seção ativa
+        function activateSection(targetId) {
+            sections.forEach(section => {
+                section.classList.remove('active'); // Remove 'active' de todas
+                if (section.id === targetId) {
+                    section.classList.add('active'); // Adiciona na selecionada
+                }
+            });
+        }
+
+        // Configura os cliques nos links de navegação
+        links.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // Evita o comportamento padrão do link
+                const targetId = link.getAttribute('data-target'); // Pega o alvo
+                activateSection(targetId);
+                window.location.hash = targetId; // Atualiza o hash na URL
+            });
+        });
+
+        // Verifica o hash inicial na URL e ativa a seção correspondente
+        const initialHash = window.location.hash.substring(1);
+        if (initialHash) {
+            activateSection(initialHash);
+        }
+    </script>
+</body>
+</html>

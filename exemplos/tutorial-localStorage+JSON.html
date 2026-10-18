@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Dados com LocalStorage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    input {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerenciador de Dados com LocalStorage</h1>
+
+  <!-- Campos de entrada para texto e números -->
+  <label for="textInput">Texto:</label>
+  <input type="text" id="textInput" placeholder="Digite um texto" required>
+  <br>
+  <label for="vectorInput1">Número 1 (0 ou 1):</label>
+  <input type="number" id="vectorInput1" min="0" max="1" required>
+  <label for="vectorInput2">Número 2 (0 ou 1):</label>
+  <input type="number" id="vectorInput2" min="0" max="1" required>
+  <br>
+  <!-- Botão para salvar a entrada -->
+  <button onclick="saveEntry()">Salvar Entrada</button>
+  <!-- Botão para exportar os dados como JSON -->
+  <button onclick="exportToJson()">Exportar para JSON</button>
+  <br><br>
+
+  <!-- Campo para upload de JSON e botão para carregá-lo -->
+  <input type="file" id="jsonUpload" accept=".json">
+  <button onclick="uploadJson()">Carregar Dados JSON</button>
+
+  <!-- Tabela para exibir os dados -->
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Texto</th>
+        <th>Vetor</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <br><br>
+  <button onclick="resetData()">Resetar Dados</button>
+  <script>
+  function resetData() {
+  if (confirm('Tem certeza de que deseja apagar todos os dados? Essa ação não pode ser desfeita.')) {
+    // Remove o namespace do localStorage
+    localStorage.removeItem(STORAGE_NAMESPACE);
+
+    // Atualiza a tabela para limpar a exibição
+    updateTable();
+
+    alert('Todos os dados foram apagados com sucesso!');
+  }
+}
+
+    // Define um nome exclusivo para salvar os dados no localStorage
+    const STORAGE_NAMESPACE = 'myAppNamespace';
+
+    /**
+     * Função que pega todos os dados salvos no localStorage para este aplicativo.
+     * - Se já existirem dados, eles serão carregados.
+     * - Se não houver dados, retorna um objeto vazio ({}).
+     */
+    function getNamespaceData() {
+      const storedData = localStorage.getItem(STORAGE_NAMESPACE);
+      return storedData ? JSON.parse(storedData) : {}; // Converte o texto salvo no localStorage de volta para um objeto JSON.
+    }
+
+    /**
+     * Função que salva todos os dados no localStorage para este aplicativo.
+     * - Recebe os dados em formato de objeto e os salva como texto JSON.
+     */
+    function setNamespaceData(data) {
+      localStorage.setItem(STORAGE_NAMESPACE, JSON.stringify(data));
+    }
+
+    /**
+     * Função que salva uma nova entrada no localStorage.
+     * - Lê os valores dos campos (texto e números).
+     * - Adiciona a nova entrada ao objeto de dados existente.
+     * - Atualiza o localStorage com os novos dados.
+     */
+    function saveEntry() {
+      // Lê os valores dos campos de entrada
+      const textInput = document.getElementById('textInput').value.trim(); // Texto digitado pelo usuário
+      const vectorInput1 = parseInt(document.getElementById('vectorInput1').value); // Primeiro número
+      const vectorInput2 = parseInt(document.getElementById('vectorInput2').value); // Segundo número
+
+      // Verifica se os campos foram preenchidos corretamente
+      if (!textInput || isNaN(vectorInput1) || isNaN(vectorInput2)) {
+        alert('Preencha todos os campos corretamente!');
+        return;
+      }
+
+      // Obtém os dados já salvos no localStorage
+      const data = getNamespaceData();
+
+      // Adiciona ou sobrescreve a entrada no objeto de dados
+      data[textInput] = { texto: textInput, vetor: [vectorInput1, vectorInput2] };
+
+      // Salva os dados atualizados de volta no localStorage
+      setNamespaceData(data);
+      alert('Entrada salva com sucesso!');
+
+      // Atualiza a tabela exibida na página
+      updateTable();
+    }
+
+    /**
+     * Função que atualiza a tabela na página com os dados do localStorage.
+     * - Limpa a tabela.
+     * - Adiciona uma linha para cada entrada salva no localStorage.
+     */
+    function updateTable() {
+      const tableBody = document.getElementById('dataTable').querySelector('tbody');
+      tableBody.innerHTML = ''; // Remove todas as linhas da tabela
+
+      // Pega os dados salvos no namespace
+      const data = getNamespaceData();
+
+      // Adiciona cada entrada como uma nova linha na tabela
+      for (const key in data) {
+        const entry = data[key];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.texto}</td>
+          <td>[${entry.vetor.join(', ')}]</td>
+        `;
+        tableBody.appendChild(row);
+      }
+    }
+
+    /**
+     * Função que exporta os dados do localStorage para um arquivo JSON.
+     * - Salva apenas os dados do namespace deste aplicativo.
+     */
+    function exportToJson() {
+      const data = getNamespaceData(); // Obtém os dados do namespace
+
+      // Cria um arquivo JSON
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      // Cria um link para download do arquivo
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dados.json'; // Nome do arquivo baixado
+      a.click();
+
+      // Libera a URL criada
+      URL.revokeObjectURL(url);
+    }
+
+    /**
+     * Função que carrega dados de um arquivo JSON enviado pelo usuário.
+     * - Substitui todos os dados no localStorage pelos dados carregados.
+     */
+    function uploadJson() {
+      const fileInput = document.getElementById('jsonUpload'); // Campo de upload
+      const file = fileInput.files[0]; // Obtém o arquivo selecionado
+
+      // Verifica se um arquivo foi selecionado
+      if (!file) {
+        alert('Por favor, selecione um arquivo JSON!');
+        return;
+      }
+
+      const reader = new FileReader(); // Cria um leitor de arquivos
+
+      // Quando o arquivo for lido, executa esta função
+      reader.onload = function(event) {
+        try {
+          // Tenta converter o conteúdo do arquivo em objeto JSON
+          const uploadedData = JSON.parse(event.target.result);
+
+          // Verifica se os dados importados têm o formato esperado
+          if (typeof uploadedData !== 'object' || Array.isArray(uploadedData)) {
+            throw new Error('Formato inválido');
+          }
+
+          // Substitui os dados do namespace pelos dados importados
+          setNamespaceData(uploadedData);
+          alert('Dados carregados com sucesso!');
+          updateTable(); // Atualiza a tabela com os novos dados
+        } catch (e) {
+          alert('Erro ao carregar o arquivo JSON!');
+          console.error(e);
+        }
+      };
+
+      // Lê o conteúdo do arquivo JSON
+      reader.readAsText(file);
+    }
+
+    // Atualiza a tabela automaticamente ao carregar a página
+    window.onload = updateTable;
+  </script>
+</body>
+</html>
