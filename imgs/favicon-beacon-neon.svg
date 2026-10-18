@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
   <defs>
-    <!-- Fundo de superfície sólida escura -->
+    <!-- Fundo de superficie solida escura Linear -->
     <linearGradient id="iconSurface" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#141516"/>
       <stop offset="100%" stop-color="#090a0b"/>
@@ -20,17 +20,17 @@
     </linearGradient>
   </defs>
 
-  <!-- Base com cantos sutis quase retos (rx="4") e borda hairline -->
-  <rect x="1.5" y="1.5" width="61" height="61" rx="4" fill="url(#iconSurface)" stroke="url(#iconBorder)" stroke-width="1.2"/>
+  <!-- Base com cantos sutis quase retos (rx="3") e borda hairline -->
+  <rect x="1.5" y="1.5" width="61" height="61" rx="3" fill="url(#iconSurface)" stroke="url(#iconBorder)" stroke-width="1.2"/>
 
-  <!-- Feixe de luz volumétrico elegante -->
+  <!-- Feixe de luz volumetrico elegante -->
   <polygon points="23,20 60,11 60,37 23,26" fill="url(#beamGrad)"/>
 
   <!-- Linhas de contorno discretas do feixe -->
   <line x1="23" y1="20" x2="60" y2="11" stroke="#828fff" stroke-width="0.8" stroke-opacity="0.45"/>
   <line x1="23" y1="26" x2="60" y2="37" stroke="#5e6ad2" stroke-width="0.8" stroke-opacity="0.3"/>
 
-  <!-- Prompt de Terminal >_ refinado e monocromático -->
+  <!-- Prompt de Terminal >_ refinado e monocromatico -->
   <g>
     <path d="M 43,19 L 48.5,23.5 L 43,28" fill="none" stroke="#f7f8f8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     <line x1="51.5" y1="28" x2="57" y2="28" stroke="#828fff" stroke-width="2.2" stroke-linecap="round"/>
@@ -42,22 +42,22 @@
   <!-- Porta -->
   <path d="M 15,55 L 15,49 A 3,3 0 0 1 21,49 L 21,55 Z" fill="#5e6ad2"/>
 
-  <!-- Corpo da torre em tom de superfície -->
+  <!-- Corpo da torre em tom de superficie -->
   <polygon points="9,28 27,28 30,50 6,50" fill="#0f1011" stroke="#23252a" stroke-width="0.8"/>
   
-  <!-- Faixas arquitetônicas refinadas (substituindo neon amarelo/verde) -->
+  <!-- Faixas arquitetonicas refinadas -->
   <polygon points="6.8,44 29.2,36 29.6,38 7.2,46" fill="#23252a"/>
   <polygon points="7.8,36 28.2,29 28.6,30.5 8.2,37.5" fill="#34343a"/>
 
   <!-- Plataforma da Torre -->
   <polygon points="7,26 29,26 28,28 8,28" fill="#5e6ad2"/>
 
-  <!-- Câmara da Lanterna com luz da torre -->
+  <!-- Camara da Lanterna com luz da torre -->
   <rect x="10" y="17" width="16" height="9" rx="2" fill="#010102" stroke="#5e6ad2" stroke-width="1"/>
   <circle cx="18" cy="21.5" r="3" fill="#5e6ad2" fill-opacity="0.5"/>
   <circle cx="18" cy="21.5" r="1.5" fill="#f7f8f8"/>
 
-  <!-- Cúpula de Topo -->
+  <!-- Cupula de Topo -->
   <polygon points="18,7 28,17 8,17" fill="#18191a" stroke="#23252a" stroke-width="0.8"/>
   <circle cx="18" cy="6" r="1.5" fill="#828fff"/>
 </svg>
